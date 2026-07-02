@@ -379,6 +379,23 @@ export function Counter({ to, suffix = "", duration = 1.6 }: { to: number; suffi
   return <span ref={ref}>{n}{suffix}</span>;
 }
 
+/* ---------------- Section Heading ---------------- */
+function SectionHeading({
+  eyebrow, title, highlight, desc, center = false,
+}: { eyebrow: string; title: string; highlight?: string; desc?: string; center?: boolean }) {
+  return (
+    <Reveal>
+      <div className={center ? "max-w-2xl mx-auto text-center" : "max-w-2xl"}>
+        <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />{eyebrow}</span>
+        <h2 className="font-display mt-5 text-4xl md:text-5xl lg:text-[3.5rem] leading-[1.05] tracking-tight text-brand-ink">
+          {title}{highlight && <> <span className="text-gradient-brand italic">{highlight}</span></>}
+        </h2>
+        {desc && <p className="mt-5 text-lg text-foreground/60 leading-relaxed">{desc}</p>}
+      </div>
+    </Reveal>
+  );
+}
+
 /* ---------------- Why ChatOne ---------------- */
 export function WhyChatOne() {
   const bullets = [
@@ -394,22 +411,20 @@ export function WhyChatOne() {
     { k: "24 / 7", label: "Always available", sub: "Weekends, holidays, off-hours" },
   ];
   return (
-    <section className="relative py-32 px-6" id="why-chatone">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-        <Reveal>
-          <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />Why ChatOne</span>
-          <h2 className="font-display mt-5 text-5xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
-            One platform. <span className="text-gradient-brand italic">Every answer.</span>
-          </h2>
-          <p className="mt-5 text-lg text-foreground/60 max-w-xl">
-            Your visitors ask questions every day. ChatOne turns your existing documents, PDFs, and web pages
-            into a 24/7 AI assistant that responds instantly in plain, natural language. No scripts. No flowcharts.
-          </p>
-          <ul className="mt-8 space-y-3">
+    <section id="why-chatone" className="relative py-28 md:py-36 px-6">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div>
+          <SectionHeading
+            eyebrow="Why ChatOne"
+            title="One platform."
+            highlight="Every answer."
+            desc="Your visitors ask questions every day. ChatOne turns your existing documents, PDFs, and web pages into a 24/7 AI assistant that responds instantly in plain, natural language."
+          />
+          <ul className="mt-10 space-y-3.5">
             {bullets.map((b, i) => (
               <Reveal key={b} delay={i * 0.05}>
                 <li className="flex items-start gap-3 text-[15px] text-foreground/80">
-                  <span className="mt-0.5 w-5 h-5 rounded-full bg-brand-gradient text-white flex items-center justify-center shrink-0">
+                  <span className="mt-0.5 w-5 h-5 rounded-full bg-brand-gradient text-white flex items-center justify-center shrink-0 shadow-sm shadow-[#6C4BFF]/30">
                     <Check className="w-3 h-3" />
                   </span>
                   {b}
@@ -417,22 +432,22 @@ export function WhyChatOne() {
               </Reveal>
             ))}
           </ul>
-          <div className="mt-8"><MagneticButton icon={ArrowRight}>Try ChatOne free</MagneticButton></div>
-        </Reveal>
+          <div className="mt-10"><MagneticButton icon={ArrowRight}>Try ChatOne free</MagneticButton></div>
+        </div>
 
         <Reveal delay={0.15}>
-          <div className="grid gap-5">
+          <div className="grid gap-4">
             {stats.map((s, i) => (
               <motion.div
                 key={i}
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                className="glass-card rounded-2xl p-6 flex items-center gap-6"
+                className="relative rounded-2xl p-6 md:p-7 bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_-12px_rgba(15,23,42,0.08)] hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.25)] hover:border-[#6C4BFF]/20 transition-all flex items-center gap-6"
               >
-                <div className="font-display text-5xl md:text-6xl text-gradient-brand leading-none">{s.k}</div>
+                <div className="font-display text-5xl md:text-6xl text-gradient-brand leading-none min-w-[110px]">{s.k}</div>
                 <div>
-                  <div className="text-sm font-semibold text-brand-ink">{s.label}</div>
-                  <div className="text-sm text-foreground/55">{s.sub}</div>
+                  <div className="text-[15px] font-semibold text-brand-ink">{s.label}</div>
+                  <div className="text-sm text-foreground/55 mt-0.5">{s.sub}</div>
                 </div>
               </motion.div>
             ))}
@@ -454,24 +469,18 @@ export function Features() {
     { icon: BarChart3, title: "Usage Tracking", desc: "Monitor conversations, track questions, and identify gaps in your knowledge base.", tags: ["Analytics", "Logs", "Reports"] },
   ];
   return (
-    <section id="features" className="relative py-32 px-6 bg-gradient-to-b from-white via-indigo-50/30 to-white overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-60" />
+    <section id="features" className="relative py-28 md:py-36 px-6 overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-indigo-50/60 via-white/0 to-white/0" />
       <div className="relative max-w-7xl mx-auto">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />Features</span>
-            <h2 className="font-display mt-5 text-5xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
-              Everything you need to build a <span className="text-gradient-brand italic">smart AI chatbot</span>
-            </h2>
-            <p className="mt-5 text-lg text-foreground/60">
-              Six core features that take you from zero to a fully deployed AI website assistant — setup takes minutes, not months.
-            </p>
-          </div>
-        </Reveal>
-
+        <SectionHeading
+          eyebrow="Features"
+          title="Everything you need to build a"
+          highlight="smart AI chatbot"
+          desc="Six core features that take you from zero to a fully deployed AI website assistant — setup takes minutes, not months."
+        />
         <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {items.map((f, i) => (
-            <Reveal key={f.title} delay={i * 0.06}>
+            <Reveal key={f.title} delay={i * 0.05}>
               <FeatureCard {...f} />
             </Reveal>
           ))}
@@ -493,22 +502,22 @@ function FeatureCard({ icon: Icn, title, desc, tags }: { icon: any; title: strin
       }}
       whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 220, damping: 18 }}
-      className="grad-border relative rounded-2xl p-6 h-full glass-card overflow-hidden group"
+      className="relative rounded-2xl p-7 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-16px_rgba(15,23,42,0.12)] hover:border-[#6C4BFF]/25 hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.25)] transition-all overflow-hidden group"
     >
-      <div className="grad-border-inner rounded-2xl" />
       <div
+        aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `radial-gradient(260px 200px at ${pos.x}% ${pos.y}%, rgba(108,75,255,0.15), transparent 70%)` }}
+        style={{ background: `radial-gradient(300px 220px at ${pos.x}% ${pos.y}%, rgba(108,75,255,0.10), transparent 70%)` }}
       />
       <div className="relative">
         <div className="w-11 h-11 rounded-xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/25 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
           <Icn className="w-5 h-5" />
         </div>
-        <h3 className="mt-5 text-xl font-semibold text-brand-ink">{title}</h3>
+        <h3 className="mt-6 text-xl font-semibold text-brand-ink tracking-tight">{title}</h3>
         <p className="mt-2 text-[15px] text-foreground/60 leading-relaxed">{desc}</p>
-        <div className="mt-5 flex flex-wrap gap-1.5">
+        <div className="mt-6 flex flex-wrap gap-1.5">
           {tags.map((t) => (
-            <span key={t} className="text-[11px] font-medium px-2 py-1 rounded-full bg-indigo-50 text-[#4c39c9] border border-indigo-100">
+            <span key={t} className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-indigo-50/70 text-[#4c39c9] border border-indigo-100/80">
               {t}
             </span>
           ))}
@@ -527,29 +536,29 @@ export function HowItWorks() {
     { n: "04", t: "Embed and go live", d: "Copy one line of code. Paste it into your website. Your AI assistant is live and answering visitors around the clock.", icon: Code2 },
   ];
   return (
-    <section id="how-it-works" className="relative py-32 px-6">
+    <section id="how-it-works" className="relative py-28 md:py-36 px-6 bg-gradient-to-b from-white via-surface to-white">
       <div className="max-w-7xl mx-auto">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />How it works</span>
-            <h2 className="font-display mt-5 text-5xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
-              From zero to live chatbot in <span className="text-gradient-brand italic">under 10 minutes</span>
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-          <div className="hidden lg:block absolute top-8 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[#6C4BFF]/40 to-transparent" />
+        <SectionHeading
+          eyebrow="How it works"
+          title="From zero to live chatbot in"
+          highlight="under 10 minutes"
+        />
+        <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5 relative">
+          <div aria-hidden className="hidden lg:block absolute top-14 left-[12%] right-[12%] h-px bg-gradient-to-r from-transparent via-[#6C4BFF]/40 to-transparent" />
           {steps.map((s, i) => (
             <Reveal key={s.n} delay={i * 0.08}>
-              <motion.div whileHover={{ y: -6 }} className="relative rounded-2xl p-6 bg-white border border-black/5 hover:border-[#6C4BFF]/30 transition-all h-full shadow-sm hover:shadow-xl hover:shadow-[#6C4BFF]/10">
+              <motion.div
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                className="relative rounded-2xl p-7 bg-white/80 backdrop-blur-xl border border-black/[0.06] hover:border-[#6C4BFF]/25 transition-all h-full shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.22)]"
+              >
                 <div className="flex items-center justify-between">
-                  <span className="font-display text-3xl text-gradient-brand">{s.n}</span>
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-[#6C4BFF] flex items-center justify-center">
-                    <s.icon className="w-4.5 h-4.5" />
+                  <span className="font-display text-4xl text-gradient-brand leading-none">{s.n}</span>
+                  <div className="w-11 h-11 rounded-xl bg-indigo-50 text-[#6C4BFF] flex items-center justify-center border border-indigo-100">
+                    <s.icon className="w-5 h-5" />
                   </div>
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-brand-ink">{s.t}</h3>
+                <h3 className="mt-6 text-lg font-semibold text-brand-ink tracking-tight">{s.t}</h3>
                 <p className="mt-2 text-sm text-foreground/60 leading-relaxed">{s.d}</p>
               </motion.div>
             </Reveal>
@@ -569,29 +578,31 @@ export function UseCases() {
     { icon: "📖", t: "Documentation Sites", d: "Add a conversational AI to your docs so visitors can ask questions in plain language instead of searching through pages of content.", link: "docs use case" },
   ];
   return (
-    <section className="relative py-32 px-6 bg-surface">
+    <section className="relative py-28 md:py-36 px-6">
       <div className="max-w-7xl mx-auto">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />Use cases</span>
-            <h2 className="font-display mt-5 text-5xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
-              Built for every type of <span className="text-gradient-brand italic">business</span>
-            </h2>
-            <p className="mt-5 text-lg text-foreground/60">
-              Whether you run a Shopify store, a SaaS platform, or a local service business, ChatOne has a use case built for you.
-            </p>
-          </div>
-        </Reveal>
+        <SectionHeading
+          eyebrow="Use cases"
+          title="Built for every type of"
+          highlight="business"
+          desc="Whether you run a Shopify store, a SaaS platform, or a local service business, ChatOne has a use case built for you."
+        />
         <div className="mt-16 grid md:grid-cols-2 gap-5">
           {uses.map((u, i) => (
             <Reveal key={u.t} delay={i * 0.06}>
-              <motion.div whileHover={{ y: -6 }} className="glass-card rounded-2xl p-8 h-full group">
-                <div className="text-3xl">{u.icon}</div>
-                <h3 className="mt-4 text-2xl font-semibold text-brand-ink">{u.t}</h3>
-                <p className="mt-3 text-[15px] text-foreground/60 leading-relaxed">{u.d}</p>
-                <a href="#" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C4BFF] group-hover:gap-2.5 transition-all">
-                  Explore {u.link} <ArrowRight className="w-4 h-4" />
-                </a>
+              <motion.div
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                className="relative rounded-2xl p-8 md:p-10 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-20px_rgba(15,23,42,0.15)] hover:border-[#6C4BFF]/25 hover:shadow-[0_25px_60px_-25px_rgba(108,75,255,0.25)] transition-all group overflow-hidden"
+              >
+                <div className="pointer-events-none absolute -top-16 -right-16 w-56 h-56 rounded-full bg-gradient-to-br from-indigo-100/60 to-blue-100/40 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <div className="relative">
+                  <div className="text-3xl">{u.icon}</div>
+                  <h3 className="mt-5 text-2xl font-semibold text-brand-ink tracking-tight">{u.t}</h3>
+                  <p className="mt-3 text-[15px] text-foreground/60 leading-relaxed">{u.d}</p>
+                  <a href="#" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C4BFF] group-hover:gap-2.5 transition-all">
+                    Explore {u.link} <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               </motion.div>
             </Reveal>
           ))}
@@ -610,37 +621,30 @@ export function Integrations() {
   ];
   const stacks = ["Shopify", "Wix", "Squarespace", "Webflow", "Framer", "React", "Vue", "Angular", "HTML"];
   return (
-    <section id="integrations" className="relative py-32 px-6 bg-brand-ink text-white overflow-hidden">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-0 left-1/3 w-[500px] h-[500px] rounded-full bg-[#6C4BFF]/20 blur-[130px]" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-[#3B82F6]/15 blur-[140px]" />
-      </div>
-      <div className="pointer-events-none absolute inset-0 noise" />
+    <section id="integrations" className="relative py-28 md:py-36 px-6 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-70" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
       <div className="relative max-w-7xl mx-auto">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/15 text-[11px] uppercase tracking-[0.15em] text-white/70">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]" /> Integrations
-            </span>
-            <h2 className="font-display mt-5 text-5xl md:text-6xl leading-[1.02] tracking-tight">
-              Connects to the tools your team <span className="text-gradient-brand italic">already uses</span>
-            </h2>
-            <p className="mt-5 text-lg text-white/60">
-              ChatOne fits into your existing workflow — Google Drive, OneDrive, and every major website platform out of the box.
-            </p>
-          </div>
-        </Reveal>
-
+        <SectionHeading
+          eyebrow="Integrations"
+          title="Connects to the tools your team"
+          highlight="already uses"
+          desc="ChatOne fits into your existing workflow — Google Drive, OneDrive, and every major website platform out of the box."
+        />
         <div className="mt-16 grid md:grid-cols-3 gap-5">
           {cards.map((c, i) => (
             <Reveal key={c.t} delay={i * 0.08}>
-              <motion.div whileHover={{ y: -6 }} className="relative rounded-2xl p-7 bg-white/[0.04] border border-white/10 backdrop-blur-xl h-full hover:bg-white/[0.06] transition">
-                <div className="w-11 h-11 rounded-xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/40">
+              <motion.div
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                className="relative rounded-2xl p-7 h-full bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-20px_rgba(15,23,42,0.12)] hover:border-[#6C4BFF]/25 hover:shadow-[0_25px_60px_-25px_rgba(108,75,255,0.25)] transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/25">
                   <c.icon className="w-5 h-5" />
                 </div>
-                <h3 className="mt-5 text-xl font-semibold">{c.t}</h3>
-                <p className="mt-2 text-sm text-white/55 leading-relaxed">{c.d}</p>
-                <div className="mt-5 inline-flex items-center gap-1.5 text-xs text-emerald-300/90">
+                <h3 className="mt-6 text-xl font-semibold text-brand-ink tracking-tight">{c.t}</h3>
+                <p className="mt-2 text-[15px] text-foreground/60 leading-relaxed">{c.d}</p>
+                <div className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
                   <Check className="w-3.5 h-3.5" /> {c.tag}
                 </div>
               </motion.div>
@@ -649,10 +653,10 @@ export function Integrations() {
         </div>
 
         <Reveal delay={0.2}>
-          <div className="mt-14 flex flex-wrap items-center gap-3 justify-center text-sm text-white/50">
-            <span className="text-white/40">Also works with:</span>
+          <div className="mt-14 flex flex-wrap items-center gap-2.5 justify-center text-sm">
+            <span className="text-foreground/45 mr-1">Also works with:</span>
             {stacks.map((s) => (
-              <span key={s} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition">
+              <span key={s} className="px-3 py-1.5 rounded-full bg-white/80 backdrop-blur border border-black/[0.06] text-foreground/70 hover:text-brand-ink hover:border-[#6C4BFF]/25 transition">
                 {s}
               </span>
             ))}
@@ -667,63 +671,71 @@ export function Integrations() {
 export function Pricing() {
   const plans = [
     { name: "Free", price: "$0", period: "/ forever", cta: "Get started free", featured: false,
+      desc: "Everything you need to try ChatOne.",
       features: ["100 requests / month", "1 chatbot", "Knowledge base", "Website embed", "Basic analytics"] },
     { name: "Standard", price: "$29", period: "/ mo", cta: "Start free trial", featured: false,
+      desc: "For growing sites and small teams.",
       features: ["10,000 requests / month", "3 chatbots", "Advanced knowledge base", "Google Drive & OneDrive sync", "Custom branding", "Usage analytics"] },
     { name: "Pro", price: "$99", period: "/ mo", cta: "Start free trial", featured: true, badge: "Most popular",
+      desc: "For businesses that need scale and control.",
       features: ["25,000 requests / month", "10 chatbots", "Everything in Standard", "Advanced analytics", "API access", "White-label option", "Dedicated support", "Multi-user access"] },
     { name: "Custom", price: "Tailored", period: "", cta: "Contact our team", featured: false,
+      desc: "For enterprise and regulated industries.",
       features: ["Unlimited requests", "Unlimited chatbots", "Everything in Pro", "Dedicated account manager", "Custom integrations", "SLA guarantee", "CCPA / HIPAA support"] },
   ];
   return (
-    <section id="pricing" className="relative py-32 px-6 bg-white">
+    <section id="pricing" className="relative py-28 md:py-36 px-6">
       <div className="max-w-7xl mx-auto">
-        <Reveal>
-          <div className="max-w-2xl text-center mx-auto">
-            <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />Pricing</span>
-            <h2 className="font-display mt-5 text-5xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
-              Simple pricing, including a <span className="text-gradient-brand italic">genuinely free plan</span>
-            </h2>
-            <p className="mt-5 text-lg text-foreground/60">
-              No surprise fees. No "contact us for pricing." Plans built for every size of business.
-            </p>
-          </div>
-        </Reveal>
+        <SectionHeading
+          center
+          eyebrow="Pricing"
+          title="Simple pricing, including a"
+          highlight="genuinely free plan"
+          desc={`No surprise fees. No "contact us for pricing." Plans built for every size of business.`}
+        />
 
         <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
           {plans.map((p, i) => (
             <Reveal key={p.name} delay={i * 0.07}>
-              <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className={`relative rounded-2xl p-7 h-full flex flex-col ${
+              <motion.div
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                className={`relative rounded-2xl p-7 h-full flex flex-col transition-all ${
                   p.featured
-                    ? "bg-brand-ink text-white shadow-[0_40px_80px_-20px_rgba(108,75,255,0.5)] scale-[1.02]"
-                    : "bg-white border border-black/[0.06] shadow-sm"
+                    ? "bg-white border border-[#6C4BFF]/30 shadow-[0_30px_80px_-30px_rgba(108,75,255,0.45)] lg:scale-[1.03]"
+                    : "bg-white border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-16px_rgba(15,23,42,0.1)] hover:border-[#6C4BFF]/20 hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.2)]"
                 }`}
               >
                 {p.featured && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold px-3 py-1 rounded-full bg-brand-gradient text-white uppercase tracking-wider shadow-lg">
-                    {p.badge}
-                  </span>
+                  <>
+                    <div aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-indigo-50/60 via-white to-white" />
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold px-3 py-1 rounded-full bg-brand-gradient text-white uppercase tracking-wider shadow-lg shadow-[#6C4BFF]/30">
+                      {p.badge}
+                    </span>
+                  </>
                 )}
-                <div className={`text-sm font-medium ${p.featured ? "text-white/60" : "text-foreground/55"}`}>{p.name}</div>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className={`font-display text-5xl ${p.featured ? "text-white" : "text-brand-ink"}`}>{p.price}</span>
-                  <span className={`text-sm ${p.featured ? "text-white/50" : "text-foreground/50"}`}>{p.period}</span>
+                <div className="relative flex flex-col h-full">
+                  <div className="text-sm font-semibold text-brand-ink">{p.name}</div>
+                  <p className="mt-1 text-xs text-foreground/55">{p.desc}</p>
+                  <div className="mt-5 flex items-baseline gap-1">
+                    <span className="font-display text-5xl text-brand-ink leading-none">{p.price}</span>
+                    <span className="text-sm text-foreground/50">{p.period}</span>
+                  </div>
+                  <div className="my-6 h-px bg-black/5" />
+                  <ul className="space-y-2.5 flex-1">
+                    {p.features.map((f) => (
+                      <li key={f} className="text-sm flex items-start gap-2 text-foreground/75">
+                        <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#6C4BFF]" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <button className={`mt-7 w-full rounded-full py-3 text-sm font-semibold transition ${
+                    p.featured
+                      ? "bg-brand-gradient text-white shadow-lg shadow-[#6C4BFF]/30 hover:brightness-110 hover:-translate-y-0.5"
+                      : "bg-white text-brand-ink border border-black/10 hover:border-[#6C4BFF]/40 hover:text-[#6C4BFF]"
+                  }`}>{p.cta}</button>
                 </div>
-                <div className={`my-6 h-px ${p.featured ? "bg-white/10" : "bg-black/5"}`} />
-                <ul className="space-y-2.5 flex-1">
-                  {p.features.map((f) => (
-                    <li key={f} className={`text-sm flex items-start gap-2 ${p.featured ? "text-white/70" : "text-foreground/70"}`}>
-                      <Check className={`w-4 h-4 mt-0.5 shrink-0 ${p.featured ? "text-[#a78bfa]" : "text-[#6C4BFF]"}`} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <button className={`mt-7 w-full rounded-full py-3 text-sm font-semibold transition ${
-                  p.featured
-                    ? "bg-brand-gradient text-white hover:brightness-110"
-                    : "bg-brand-ink text-white hover:bg-brand-ink/90"
-                }`}>{p.cta}</button>
               </motion.div>
             </Reveal>
           ))}
@@ -745,44 +757,52 @@ export function FAQ() {
   ];
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <section id="faq" className="relative py-32 px-6">
+    <section id="faq" className="relative py-28 md:py-36 px-6 bg-gradient-to-b from-white via-surface to-white">
       <div className="max-w-3xl mx-auto">
-        <Reveal>
-          <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />FAQ</span>
-          <h2 className="font-display mt-5 text-5xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
-            Questions people ask <span className="text-gradient-brand italic">before getting started</span>
-          </h2>
-          <p className="mt-5 text-lg text-foreground/60">Everything you need to know about ChatOne.</p>
-        </Reveal>
-        <div className="mt-12 divide-y divide-black/5 border-t border-b border-black/5">
+        <SectionHeading
+          center
+          eyebrow="FAQ"
+          title="Questions people ask"
+          highlight="before getting started"
+          desc="Everything you need to know about ChatOne."
+        />
+        <div className="mt-14 space-y-3">
           {items.map((it, i) => {
             const active = open === i;
             return (
-              <div key={i}>
-                <button onClick={() => setOpen(active ? null : i)}
-                  className="w-full flex items-center justify-between gap-6 py-5 text-left group"
-                >
-                  <span className={`text-lg font-medium transition-colors ${active ? "text-[#6C4BFF]" : "text-brand-ink group-hover:text-[#6C4BFF]"}`}>
-                    {it.q}
-                  </span>
-                  <span className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${active ? "bg-brand-gradient text-white rotate-180" : "bg-indigo-50 text-[#6C4BFF]"}`}>
-                    {active ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                  </span>
-                </button>
-                <AnimatePresence initial={false}>
-                  {active && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <p className="pb-6 pr-12 text-[15px] text-foreground/65 leading-relaxed">{it.a}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <Reveal key={i} delay={i * 0.04}>
+                <div className={`rounded-2xl border transition-all backdrop-blur-xl ${
+                  active
+                    ? "bg-white border-[#6C4BFF]/25 shadow-[0_20px_50px_-25px_rgba(108,75,255,0.25)]"
+                    : "bg-white/70 border-black/[0.06] hover:border-[#6C4BFF]/20"
+                }`}>
+                  <button
+                    onClick={() => setOpen(active ? null : i)}
+                    aria-expanded={active}
+                    className="w-full flex items-center justify-between gap-6 px-6 py-5 text-left group"
+                  >
+                    <span className={`text-[16px] md:text-lg font-medium transition-colors ${active ? "text-brand-ink" : "text-brand-ink/85 group-hover:text-brand-ink"}`}>
+                      {it.q}
+                    </span>
+                    <span className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${active ? "bg-brand-gradient text-white shadow-md shadow-[#6C4BFF]/30" : "bg-indigo-50 text-[#6C4BFF]"}`}>
+                      {active ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    </span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {active && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-6 pb-6 pr-12 text-[15px] text-foreground/65 leading-relaxed">{it.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </Reveal>
             );
           })}
         </div>
@@ -795,33 +815,33 @@ export function FAQ() {
 export function CTA() {
   return (
     <section className="relative py-24 px-6">
-      <div className="relative max-w-6xl mx-auto rounded-[2rem] overflow-hidden bg-brand-ink text-white p-14 md:p-20 text-center">
+      <div className="relative max-w-6xl mx-auto rounded-[2rem] overflow-hidden border border-[#6C4BFF]/15 bg-white p-14 md:p-20 text-center shadow-[0_40px_100px_-40px_rgba(108,75,255,0.35)]">
+        <div className="pointer-events-none absolute inset-0 mesh-bg opacity-90" />
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 -left-24 w-[400px] h-[400px] rounded-full bg-[#6C4BFF]/40 blur-[120px] animate-blob" />
-          <div className="absolute -bottom-24 -right-24 w-[400px] h-[400px] rounded-full bg-[#3B82F6]/35 blur-[130px] animate-blob" style={{ animationDelay: "-6s" }} />
+          <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-[#6C4BFF]/25 blur-[120px] animate-blob" />
+          <div className="absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full bg-[#3B82F6]/20 blur-[130px] animate-blob" style={{ animationDelay: "-6s" }} />
         </div>
-        <div className="pointer-events-none absolute inset-0 noise" />
-        <Reveal>
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/15 text-[11px] uppercase tracking-[0.15em] text-white/70">
-            <ShieldCheck className="w-3.5 h-3.5" /> Ready when you are
-          </span>
-          <h2 className="font-display mt-6 text-5xl md:text-7xl leading-[1.02] tracking-tight">
-            Your website chatbot could be <span className="text-gradient-brand italic">live today.</span>
-          </h2>
-          <p className="mt-5 text-lg text-white/60 max-w-2xl mx-auto">
-            Join thousands of businesses using ChatOne to answer visitor questions, reduce support volume, and scale confidently.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <MagneticButton icon={ArrowRight}>Start for free — no card needed</MagneticButton>
-            <a href="#" className="inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white/85 hover:text-white transition">
-              See a live demo <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-          <div className="mt-7 flex items-center justify-center gap-6 text-sm text-white/50">
-            <span className="inline-flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-400" /> Setup in under 10 minutes</span>
-            <span className="inline-flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-400" /> Cancel anytime</span>
-          </div>
-        </Reveal>
+        <div className="relative">
+          <Reveal>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#6C4BFF]/20 bg-white/70 backdrop-blur text-[11px] uppercase tracking-[0.15em] text-brand-ink/70">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#6C4BFF]" /> Ready when you are
+            </span>
+            <h2 className="font-display mt-6 text-4xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
+              Your website chatbot could be <span className="text-gradient-brand italic">live today.</span>
+            </h2>
+            <p className="mt-5 text-lg text-foreground/60 max-w-2xl mx-auto">
+              Join thousands of businesses using ChatOne to answer visitor questions, reduce support volume, and scale confidently.
+            </p>
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+              <MagneticButton icon={ArrowRight}>Start for free — no card needed</MagneticButton>
+              <MagneticButton variant="ghost" icon={ArrowRight}>See a live demo</MagneticButton>
+            </div>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-foreground/55">
+              <span className="inline-flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> Setup in under 10 minutes</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> Cancel anytime</span>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -836,20 +856,25 @@ export function Footer() {
     { h: "Legal", l: ["Privacy", "Terms", "Sitemap", "Contact"] },
   ];
   return (
-    <footer className="relative pt-20 pb-10 px-6 bg-white border-t border-black/5">
+    <footer className="relative pt-20 pb-10 px-6 bg-gradient-to-b from-white to-surface border-t border-black/5">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6C4BFF]/25 to-transparent" />
       <div className="max-w-7xl mx-auto grid md:grid-cols-6 gap-10">
         <div className="md:col-span-2">
           <img src={logo.url} alt="ChatOne" className="h-8" />
           <p className="mt-5 text-sm text-foreground/60 max-w-xs leading-relaxed">
             The AI chatbot for websites trusted by businesses worldwide. Build, train, and deploy in minutes. No coding required.
           </p>
+          <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-black/[0.06] text-xs text-foreground/60 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            All systems operational
+          </div>
         </div>
         {cols.map((c) => (
           <div key={c.h}>
             <div className="text-sm font-semibold text-brand-ink">{c.h}</div>
             <ul className="mt-4 space-y-2.5">
               {c.l.map((i) => (
-                <li key={i}><a href="#" className="text-sm text-foreground/60 hover:text-foreground transition">{i}</a></li>
+                <li key={i}><a href="#" className="text-sm text-foreground/60 hover:text-[#6C4BFF] transition">{i}</a></li>
               ))}
             </ul>
           </div>
