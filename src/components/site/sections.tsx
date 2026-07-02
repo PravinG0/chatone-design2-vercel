@@ -5,6 +5,8 @@ import icon from "@/assets/chatone-icon.png.asset.json";
 import {
   ArrowRight, Check, Sparkles, Cloud, Palette, Code2, BarChart3, BookOpen,
   Zap, Bot, MessageSquare, Globe, Layers, ShieldCheck, Plus, Minus,
+  Twitter, Github, Linkedin, Youtube, Rocket, Upload, Wand2, Send,
+  ShoppingBag, Headphones, FileText, TrendingUp,
 } from "lucide-react";
 
 /* ---------------- NAV ---------------- */
