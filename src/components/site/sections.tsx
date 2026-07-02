@@ -398,62 +398,107 @@ function SectionHeading({
   );
 }
 
+/* ---------------- Tilt Card ---------------- */
+function TiltCard({ children, className = "", intensity = 8 }: { children: ReactNode; className?: string; intensity?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const rx = useMotionValue(0); const ry = useMotionValue(0);
+  const srx = useSpring(rx, { stiffness: 180, damping: 20 });
+  const sry = useSpring(ry, { stiffness: 180, damping: 20 });
+  const onMove = (e: React.MouseEvent) => {
+    const r = ref.current!.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    ry.set(px * intensity); rx.set(-py * intensity);
+  };
+  const reset = () => { rx.set(0); ry.set(0); };
+  return (
+    <motion.div
+      ref={ref} onMouseMove={onMove} onMouseLeave={reset}
+      style={{ rotateX: srx, rotateY: sry, transformPerspective: 1000 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 /* ---------------- Why ChatOne ---------------- */
 export function WhyChatOne() {
   const bullets = [
-    "Train on your own PDFs, DOCX, and websites",
-    "Auto-sync with Google Drive and OneDrive",
-    "Embed on any website in under 5 minutes",
-    "Fully branded with your colors and logo",
-    "Works on WordPress, Shopify, React, HTML — any stack",
-  ];
-  const stats = [
-    { k: <><Counter to={60} suffix="%" /></>, label: "Support tickets resolved", sub: "Average reduction in the first month" },
-    { k: "< 5 min", label: "Time to deploy", sub: "From signup to a live, trained chatbot" },
-    { k: "24 / 7", label: "Always available", sub: "Weekends, holidays, off-hours" },
+    { icon: BookOpen, t: "Train on your content", d: "PDFs, DOCX, websites — all in one workspace." },
+    { icon: Cloud, t: "Sync from the cloud", d: "Google Drive & OneDrive stay in perfect sync." },
+    { icon: Code2, t: "Deploy in minutes", d: "One line of code on any website, any stack." },
+    { icon: Palette, t: "Match your brand", d: "Colors, logo, tone — fully yours." },
   ];
   return (
-    <section id="why-chatone" className="relative py-28 md:py-36 px-6">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-        <div>
+    <section id="why-chatone" className="relative py-28 md:py-36 px-6 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-60" />
+      <div className="relative max-w-7xl mx-auto">
+        <div className="text-center">
           <SectionHeading
+            center
             eyebrow="Why ChatOne"
             title="One platform."
             highlight="Every answer."
-            desc="Your visitors ask questions every day. ChatOne turns your existing documents, PDFs, and web pages into a 24/7 AI assistant that responds instantly in plain, natural language."
+            desc="Turn every document you already have into a 24/7 AI assistant that answers instantly, on brand, in plain language."
           />
-          <ul className="mt-10 space-y-3.5">
-            {bullets.map((b, i) => (
-              <Reveal key={b} delay={i * 0.05}>
-                <li className="flex items-start gap-3 text-[15px] text-foreground/80">
-                  <span className="mt-0.5 w-5 h-5 rounded-full bg-brand-gradient text-white flex items-center justify-center shrink-0 shadow-sm shadow-[#6C4BFF]/30">
-                    <Check className="w-3 h-3" />
-                  </span>
-                  {b}
-                </li>
-              </Reveal>
-            ))}
-          </ul>
-          <div className="mt-10"><MagneticButton icon={ArrowRight}>Try ChatOne free</MagneticButton></div>
         </div>
 
-        <Reveal delay={0.15}>
-          <div className="grid gap-4">
-            {stats.map((s, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -4 }}
-                transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                className="relative rounded-2xl p-6 md:p-7 bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_-12px_rgba(15,23,42,0.08)] hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.25)] hover:border-[#6C4BFF]/20 transition-all flex items-center gap-6"
-              >
-                <div className="font-display text-5xl md:text-6xl text-gradient-brand leading-none min-w-[110px]">{s.k}</div>
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-5 auto-rows-[minmax(180px,auto)]">
+          <Reveal>
+            <TiltCard className="md:col-span-3 rounded-3xl p-8 md:p-10 h-full bg-white border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_60px_-30px_rgba(108,75,255,0.25)] overflow-hidden relative group">
+              <div className="pointer-events-none absolute -top-20 -right-20 w-72 h-72 rounded-full bg-[#6C4BFF]/15 blur-3xl group-hover:scale-125 transition-transform duration-700" />
+              <div className="relative">
+                <div className="eyebrow"><TrendingUp className="w-3.5 h-3.5" /> Support impact</div>
+                <div className="font-display mt-6 text-7xl md:text-8xl text-gradient-brand leading-none">
+                  <Counter to={60} suffix="%" />
+                </div>
+                <p className="mt-4 text-lg text-brand-ink font-medium">Support tickets resolved</p>
+                <p className="mt-1 text-sm text-foreground/55">Average reduction in the first month.</p>
+              </div>
+            </TiltCard>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <div className="md:col-span-3 grid grid-cols-2 gap-4 md:gap-5 h-full">
+              <TiltCard className="rounded-3xl p-6 h-full bg-gradient-to-br from-[#6C4BFF] to-[#3B82F6] text-white shadow-[0_20px_60px_-25px_rgba(108,75,255,0.6)] overflow-hidden relative flex flex-col justify-between">
+                <Rocket className="w-6 h-6 opacity-80" />
                 <div>
-                  <div className="text-[15px] font-semibold text-brand-ink">{s.label}</div>
-                  <div className="text-sm text-foreground/55 mt-0.5">{s.sub}</div>
+                  <div className="font-display text-4xl md:text-5xl leading-none">&lt; 5<span className="text-2xl md:text-3xl"> min</span></div>
+                  <p className="mt-2 text-sm text-white/85">From signup to a live, trained chatbot.</p>
+                </div>
+              </TiltCard>
+              <TiltCard className="rounded-3xl p-6 h-full bg-white border border-black/[0.06] shadow-[0_20px_60px_-30px_rgba(15,23,42,0.1)] flex flex-col justify-between">
+                <ShieldCheck className="w-6 h-6 text-[#6C4BFF]" />
+                <div>
+                  <div className="font-display text-4xl md:text-5xl text-brand-ink leading-none">24/7</div>
+                  <p className="mt-2 text-sm text-foreground/60">Always on — weekends, holidays, off-hours.</p>
+                </div>
+              </TiltCard>
+            </div>
+          </Reveal>
+
+          {bullets.map((b, i) => (
+            <Reveal key={b.t} delay={0.15 + i * 0.05}>
+              <motion.div
+                whileHover={{ y: -4 }}
+                transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                className="rounded-2xl p-6 h-full bg-white/70 backdrop-blur-xl border border-black/[0.06] hover:border-[#6C4BFF]/25 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_15px_40px_-20px_rgba(108,75,255,0.25)] transition-all flex items-start gap-4"
+              >
+                <div className="w-11 h-11 shrink-0 rounded-xl bg-indigo-50 border border-indigo-100 text-[#6C4BFF] flex items-center justify-center">
+                  <b.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-brand-ink">{b.t}</h3>
+                  <p className="mt-1 text-sm text-foreground/60 leading-relaxed">{b.d}</p>
                 </div>
               </motion.div>
-            ))}
-          </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal delay={0.35}>
+          <div className="mt-12 flex justify-center"><MagneticButton icon={ArrowRight}>Try ChatOne free</MagneticButton></div>
         </Reveal>
       </div>
     </section>
@@ -463,23 +508,24 @@ export function WhyChatOne() {
 /* ---------------- Features ---------------- */
 export function Features() {
   const items = [
-    { icon: BookOpen, title: "Knowledge Base", desc: "Upload PDFs, DOCX, or TXT — or point ChatOne to any URL. It crawls and learns automatically.", tags: ["PDF upload", "Web crawling", "URL training"] },
-    { icon: Sparkles, title: "Custom Tone Training", desc: "Set the exact personality. Friendly, professional, technical — or write your own system prompt.", tags: ["Tone settings", "Custom prompts", "Brand voice"] },
-    { icon: Cloud, title: "Cloud Sync", desc: "Connect Google Drive and OneDrive so your chatbot always has the latest documents.", tags: ["Google Drive", "OneDrive", "Real-time"] },
-    { icon: Palette, title: "Custom Branding", desc: "Upload your logo, choose brand colors, and design the widget. Your brand, not a generic bubble.", tags: ["Logo", "Themes", "Widget UI"] },
-    { icon: Code2, title: "Easy Embedding", desc: "One line of code. Works on WordPress, Shopify, Wix, React, Vue, HTML — every tech stack.", tags: ["JavaScript", "WordPress", "React"] },
-    { icon: BarChart3, title: "Usage Tracking", desc: "Monitor conversations, track questions, and identify gaps in your knowledge base.", tags: ["Analytics", "Logs", "Reports"] },
+    { icon: BookOpen, title: "Knowledge Base", desc: "Upload PDFs, DOCX, or TXT — or point ChatOne to any URL. It crawls and learns automatically.", tags: ["PDF", "Crawler", "URL"], accent: "from-violet-500 to-indigo-500" },
+    { icon: Sparkles, title: "Custom Tone Training", desc: "Set the exact personality — friendly, professional, technical — or write your own system prompt.", tags: ["Tone", "Prompts", "Voice"], accent: "from-fuchsia-500 to-pink-500" },
+    { icon: Cloud, title: "Cloud Sync", desc: "Connect Google Drive and OneDrive so your chatbot always has the latest documents.", tags: ["Drive", "OneDrive", "Live"], accent: "from-sky-500 to-blue-500" },
+    { icon: Palette, title: "Custom Branding", desc: "Upload your logo, choose brand colors, and design the widget. Your brand, not a generic bubble.", tags: ["Logo", "Theme", "Widget"], accent: "from-emerald-500 to-teal-500" },
+    { icon: Code2, title: "Easy Embedding", desc: "One line of code. Works on WordPress, Shopify, Wix, React, Vue, HTML — every tech stack.", tags: ["JS", "WP", "React"], accent: "from-amber-500 to-orange-500" },
+    { icon: BarChart3, title: "Usage Tracking", desc: "Monitor conversations, track questions, and identify gaps in your knowledge base.", tags: ["Logs", "Reports", "Insights"], accent: "from-rose-500 to-red-500" },
   ];
   return (
     <section id="features" className="relative py-28 md:py-36 px-6 overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-indigo-50/60 via-white/0 to-white/0" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-indigo-50/60 via-transparent to-transparent" />
       <div className="relative max-w-7xl mx-auto">
-        <SectionHeading
+        <div className="text-center"><SectionHeading
+          center
           eyebrow="Features"
           title="Everything you need to build a"
           highlight="smart AI chatbot"
-          desc="Six core features that take you from zero to a fully deployed AI website assistant — setup takes minutes, not months."
-        />
+          desc="Six core features that take you from zero to a fully deployed AI website assistant."
+        /></div>
         <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {items.map((f, i) => (
             <Reveal key={f.title} delay={i * 0.05}>
@@ -492,7 +538,7 @@ export function Features() {
   );
 }
 
-function FeatureCard({ icon: Icn, title, desc, tags }: { icon: any; title: string; desc: string; tags: string[] }) {
+function FeatureCard({ icon: Icn, title, desc, tags, accent }: { icon: any; title: string; desc: string; tags: string[]; accent: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 50, y: 50 });
   return (
@@ -504,15 +550,15 @@ function FeatureCard({ icon: Icn, title, desc, tags }: { icon: any; title: strin
       }}
       whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 220, damping: 18 }}
-      className="relative rounded-2xl p-7 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-16px_rgba(15,23,42,0.12)] hover:border-[#6C4BFF]/25 hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.25)] transition-all overflow-hidden group"
+      className="relative rounded-3xl p-7 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-20px_rgba(15,23,42,0.12)] hover:border-[#6C4BFF]/25 hover:shadow-[0_25px_60px_-25px_rgba(108,75,255,0.25)] transition-all overflow-hidden group"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `radial-gradient(300px 220px at ${pos.x}% ${pos.y}%, rgba(108,75,255,0.10), transparent 70%)` }}
+        style={{ background: `radial-gradient(320px 240px at ${pos.x}% ${pos.y}%, rgba(108,75,255,0.10), transparent 70%)` }}
       />
       <div className="relative">
-        <div className="w-11 h-11 rounded-xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/25 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${accent} text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500`}>
           <Icn className="w-5 h-5" />
         </div>
         <h3 className="mt-6 text-xl font-semibold text-brand-ink tracking-tight">{title}</h3>
@@ -524,6 +570,9 @@ function FeatureCard({ icon: Icn, title, desc, tags }: { icon: any; title: strin
             </span>
           ))}
         </div>
+        <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[#6C4BFF] opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all">
+          Learn more <ArrowRight className="w-3.5 h-3.5" />
+        </div>
       </div>
     </motion.div>
   );
@@ -532,39 +581,82 @@ function FeatureCard({ icon: Icn, title, desc, tags }: { icon: any; title: strin
 /* ---------------- How it works ---------------- */
 export function HowItWorks() {
   const steps = [
-    { n: "01", t: "Create your bot", d: "Name your bot, choose its tone — friendly, professional, or technical — and write a custom system prompt for your brand voice.", icon: Bot },
-    { n: "02", t: "Upload your knowledge", d: "Add PDFs, DOCX files, or paste any website URL. ChatOne reads your content and builds a smart knowledge base automatically.", icon: BookOpen },
-    { n: "03", t: "Customize the look", d: "Upload your logo, choose brand colors, and write a welcome message. It should feel like a natural part of your site.", icon: Palette },
-    { n: "04", t: "Embed and go live", d: "Copy one line of code. Paste it into your website. Your AI assistant is live and answering visitors around the clock.", icon: Code2 },
+    { n: "01", t: "Create your bot", d: "Name your bot, choose its tone — friendly, professional, or technical — and write a system prompt that captures your brand voice.", icon: Bot },
+    { n: "02", t: "Upload your knowledge", d: "Add PDFs, DOCX files, or paste any website URL. ChatOne reads your content and builds a smart knowledge base automatically.", icon: Upload },
+    { n: "03", t: "Customize the look", d: "Upload your logo, choose brand colors, and write a welcome message. It should feel like a natural part of your site.", icon: Wand2 },
+    { n: "04", t: "Embed and go live", d: "Copy one line of code. Paste it into your website. Your AI assistant is live and answering visitors 24/7.", icon: Send },
   ];
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 30%"] });
+  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
   return (
-    <section id="how-it-works" className="relative py-28 md:py-36 px-6 bg-gradient-to-b from-white via-surface to-white">
-      <div className="max-w-7xl mx-auto">
-        <SectionHeading
-          eyebrow="How it works"
-          title="From zero to live chatbot in"
-          highlight="under 10 minutes"
-        />
-        <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5 relative">
-          <div aria-hidden className="hidden lg:block absolute top-14 left-[12%] right-[12%] h-px bg-gradient-to-r from-transparent via-[#6C4BFF]/40 to-transparent" />
-          {steps.map((s, i) => (
-            <Reveal key={s.n} delay={i * 0.08}>
-              <motion.div
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className="relative rounded-2xl p-7 bg-white/80 backdrop-blur-xl border border-black/[0.06] hover:border-[#6C4BFF]/25 transition-all h-full shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.22)]"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-display text-4xl text-gradient-brand leading-none">{s.n}</span>
-                  <div className="w-11 h-11 rounded-xl bg-indigo-50 text-[#6C4BFF] flex items-center justify-center border border-indigo-100">
-                    <s.icon className="w-5 h-5" />
+    <section id="how-it-works" className="relative py-28 md:py-36 px-6 bg-gradient-to-b from-white via-surface to-white overflow-hidden">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center">
+          <SectionHeading
+            center
+            eyebrow="How it works"
+            title="From zero to live chatbot in"
+            highlight="under 10 minutes"
+            desc="A four-step flow designed to feel effortless — no engineers required."
+          />
+        </div>
+
+        <div ref={ref} className="relative mt-20">
+          <div aria-hidden className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px bg-black/[0.06]">
+            <motion.div style={{ height: lineHeight }} className="w-full bg-gradient-to-b from-[#6C4BFF] to-[#3B82F6] rounded-full" />
+          </div>
+
+          <div className="space-y-14 md:space-y-24">
+            {steps.map((s, i) => {
+              const right = i % 2 === 1;
+              return (
+                <motion.div
+                  key={s.n}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
+                  className={`relative grid md:grid-cols-2 gap-8 items-center ${right ? "md:[&>*:first-child]:order-2" : ""}`}
+                >
+                  <div aria-hidden className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-8 md:top-1/2 md:-translate-y-1/2 z-10">
+                    <div className="w-4 h-4 rounded-full bg-brand-gradient ring-4 ring-white shadow-lg shadow-[#6C4BFF]/40" />
                   </div>
-                </div>
-                <h3 className="mt-6 text-lg font-semibold text-brand-ink tracking-tight">{s.t}</h3>
-                <p className="mt-2 text-sm text-foreground/60 leading-relaxed">{s.d}</p>
-              </motion.div>
-            </Reveal>
-          ))}
+
+                  <div className={`pl-16 md:pl-0 ${right ? "md:pl-16" : "md:pr-16 md:text-right"}`}>
+                    <span className="font-display text-6xl md:text-7xl text-gradient-brand leading-none">{s.n}</span>
+                    <h3 className="mt-4 text-2xl md:text-3xl font-semibold text-brand-ink tracking-tight">{s.t}</h3>
+                    <p className="mt-3 text-[15px] text-foreground/60 leading-relaxed max-w-md md:inline-block">{s.d}</p>
+                  </div>
+
+                  <div className={`pl-16 md:pl-0 ${right ? "md:pr-16" : "md:pl-16"}`}>
+                    <TiltCard intensity={6} className="rounded-3xl p-8 bg-white border border-black/[0.06] shadow-[0_20px_60px_-30px_rgba(108,75,255,0.25)] relative overflow-hidden">
+                      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-60" />
+                      <div className="relative flex items-center gap-5">
+                        <div className="w-16 h-16 rounded-2xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/30 shrink-0">
+                          <s.icon className="w-7 h-7" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="h-2.5 w-2/3 rounded-full bg-foreground/10" />
+                          <div className="mt-2 h-2.5 w-1/2 rounded-full bg-foreground/10" />
+                          <div className="mt-4 h-2 w-full rounded-full bg-indigo-50 overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${40 + i * 15}%` }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+                              className="h-full bg-brand-gradient"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </TiltCard>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -574,38 +666,48 @@ export function HowItWorks() {
 /* ---------------- Use Cases ---------------- */
 export function UseCases() {
   const uses = [
-    { icon: "🎧", t: "AI Customer Support", d: "Reduce ticket volume by up to 60%. Your AI answers common questions instantly, so your team can focus on conversations that need a real person.", link: "customer support" },
-    { icon: "🛒", t: "E-commerce & Shopify", d: "Turn browsers into buyers. ChatOne answers product questions, recommends items, and handles checkout queries — reducing cart abandonment.", link: "e-commerce" },
-    { icon: "🚀", t: "SaaS Platform Support", d: "Let your AI assistant handle onboarding, feature explanations, and troubleshooting using your product docs and knowledge base.", link: "SaaS use case" },
-    { icon: "📖", t: "Documentation Sites", d: "Add a conversational AI to your docs so visitors can ask questions in plain language instead of searching through pages of content.", link: "docs use case" },
+    { icon: Headphones, t: "AI Customer Support", d: "Cut ticket volume by up to 60%. Your AI handles common questions instantly, so your team focuses on conversations that matter.", link: "customer support", stat: "60% fewer tickets" },
+    { icon: ShoppingBag, t: "E-commerce & Shopify", d: "Turn browsers into buyers. Answer product questions, recommend items, and handle checkout queries — reducing cart abandonment.", link: "e-commerce", stat: "3× conversions" },
+    { icon: Rocket, t: "SaaS Platform Support", d: "Let your AI handle onboarding, feature explanations, and troubleshooting using your product docs and knowledge base.", link: "SaaS use case", stat: "2× activation" },
+    { icon: FileText, t: "Documentation Sites", d: "Add a conversational layer to your docs so visitors ask questions in plain language instead of hunting through pages.", link: "docs use case", stat: "Instant answers" },
   ];
   return (
     <section className="relative py-28 md:py-36 px-6">
       <div className="max-w-7xl mx-auto">
-        <SectionHeading
-          eyebrow="Use cases"
-          title="Built for every type of"
-          highlight="business"
-          desc="Whether you run a Shopify store, a SaaS platform, or a local service business, ChatOne has a use case built for you."
-        />
+        <div className="text-center">
+          <SectionHeading
+            center
+            eyebrow="Use cases"
+            title="Built for every type of"
+            highlight="business"
+            desc="From Shopify stores to SaaS platforms — a use case built for you."
+          />
+        </div>
         <div className="mt-16 grid md:grid-cols-2 gap-5">
           {uses.map((u, i) => (
             <Reveal key={u.t} delay={i * 0.06}>
-              <motion.div
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className="relative rounded-2xl p-8 md:p-10 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-20px_rgba(15,23,42,0.15)] hover:border-[#6C4BFF]/25 hover:shadow-[0_25px_60px_-25px_rgba(108,75,255,0.25)] transition-all group overflow-hidden"
-              >
-                <div className="pointer-events-none absolute -top-16 -right-16 w-56 h-56 rounded-full bg-gradient-to-br from-indigo-100/60 to-blue-100/40 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="relative">
-                  <div className="text-3xl">{u.icon}</div>
-                  <h3 className="mt-5 text-2xl font-semibold text-brand-ink tracking-tight">{u.t}</h3>
-                  <p className="mt-3 text-[15px] text-foreground/60 leading-relaxed">{u.d}</p>
-                  <a href="#" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C4BFF] group-hover:gap-2.5 transition-all">
-                    Explore {u.link} <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </motion.div>
+              <TiltCard intensity={5} className="h-full">
+                <motion.div
+                  whileHover={{ y: -6 }}
+                  transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                  className="relative rounded-3xl p-8 md:p-10 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_15px_40px_-25px_rgba(15,23,42,0.15)] hover:border-[#6C4BFF]/25 hover:shadow-[0_30px_70px_-30px_rgba(108,75,255,0.3)] transition-all group overflow-hidden"
+                >
+                  <div className="pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full bg-gradient-to-br from-indigo-100/70 to-blue-100/50 blur-3xl opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all duration-700" />
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/30 group-hover:rotate-6 transition-transform duration-500 shrink-0">
+                        <u.icon className="w-6 h-6" />
+                      </div>
+                      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-[#4c39c9] border border-indigo-100 whitespace-nowrap">{u.stat}</span>
+                    </div>
+                    <h3 className="mt-6 text-2xl font-semibold text-brand-ink tracking-tight">{u.t}</h3>
+                    <p className="mt-3 text-[15px] text-foreground/60 leading-relaxed">{u.d}</p>
+                    <a href="#" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C4BFF] group-hover:gap-2.5 transition-all">
+                      Explore {u.link} <ArrowRight className="w-4 h-4" />
+                    </a>
+                  </div>
+                </motion.div>
+              </TiltCard>
             </Reveal>
           ))}
         </div>
@@ -617,51 +719,71 @@ export function UseCases() {
 /* ---------------- Integrations ---------------- */
 export function Integrations() {
   const cards = [
-    { icon: Cloud, t: "Google Drive", d: "Connect Drive folders and ChatOne syncs your documents automatically. Update a file and your bot knows instantly.", tag: "Auto-sync enabled" },
-    { icon: Layers, t: "Microsoft OneDrive", d: "Connect OneDrive and your chatbot always has the most current version of every document you've shared.", tag: "Auto-sync enabled" },
-    { icon: Globe, t: "WordPress Plugin", d: "The easiest WordPress chatbot plugin you'll install. Add a shortcode, paste your embed ID — live in under 2 minutes.", tag: "Plugin available" },
+    { icon: Cloud, t: "Google Drive", d: "Connect Drive folders and ChatOne syncs your documents automatically. Update a file — your bot knows instantly.", tag: "Auto-sync" },
+    { icon: Layers, t: "Microsoft OneDrive", d: "Connect OneDrive and your chatbot always has the most current version of every document you've shared.", tag: "Auto-sync" },
+    { icon: Globe, t: "WordPress Plugin", d: "The easiest WordPress chatbot plugin. Add a shortcode, paste your embed ID — live in under 2 minutes.", tag: "Plugin" },
   ];
   const stacks = ["Shopify", "Wix", "Squarespace", "Webflow", "Framer", "React", "Vue", "Angular", "HTML"];
   return (
-    <section id="integrations" className="relative py-28 md:py-36 px-6 overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-70" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+    <section id="integrations" className="relative py-28 md:py-36 px-6 overflow-hidden bg-gradient-to-b from-white via-indigo-50/30 to-white">
+      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-60" />
       <div className="relative max-w-7xl mx-auto">
-        <SectionHeading
-          eyebrow="Integrations"
-          title="Connects to the tools your team"
-          highlight="already uses"
-          desc="ChatOne fits into your existing workflow — Google Drive, OneDrive, and every major website platform out of the box."
-        />
+        <div className="text-center">
+          <SectionHeading
+            center
+            eyebrow="Integrations"
+            title="Connects to the tools your team"
+            highlight="already uses"
+            desc="Google Drive, OneDrive, and every major website platform — out of the box."
+          />
+        </div>
         <div className="mt-16 grid md:grid-cols-3 gap-5">
           {cards.map((c, i) => (
             <Reveal key={c.t} delay={i * 0.08}>
-              <motion.div
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className="relative rounded-2xl p-7 h-full bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-20px_rgba(15,23,42,0.12)] hover:border-[#6C4BFF]/25 hover:shadow-[0_25px_60px_-25px_rgba(108,75,255,0.25)] transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/25">
-                  <c.icon className="w-5 h-5" />
-                </div>
-                <h3 className="mt-6 text-xl font-semibold text-brand-ink tracking-tight">{c.t}</h3>
-                <p className="mt-2 text-[15px] text-foreground/60 leading-relaxed">{c.d}</p>
-                <div className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-                  <Check className="w-3.5 h-3.5" /> {c.tag}
-                </div>
-              </motion.div>
+              <TiltCard className="h-full">
+                <motion.div
+                  whileHover={{ y: -6 }}
+                  transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                  className="relative rounded-3xl p-7 h-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_15px_40px_-25px_rgba(15,23,42,0.15)] hover:border-[#6C4BFF]/25 hover:shadow-[0_30px_70px_-30px_rgba(108,75,255,0.3)] transition-all overflow-hidden group"
+                >
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6C4BFF]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-12 h-12 rounded-2xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/25 group-hover:scale-110 transition-transform">
+                    <c.icon className="w-5 h-5" />
+                  </div>
+                  <h3 className="mt-6 text-xl font-semibold text-brand-ink tracking-tight">{c.t}</h3>
+                  <p className="mt-2 text-[15px] text-foreground/60 leading-relaxed">{c.d}</p>
+                  <div className="mt-6 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+                    <Check className="w-3.5 h-3.5" /> {c.tag}
+                  </div>
+                </motion.div>
+              </TiltCard>
             </Reveal>
           ))}
         </div>
 
         <Reveal delay={0.2}>
-          <div className="mt-14 flex flex-wrap items-center gap-2.5 justify-center text-sm">
-            <span className="text-foreground/45 mr-1">Also works with:</span>
-            {stacks.map((s) => (
-              <span key={s} className="px-3 py-1.5 rounded-full bg-white/80 backdrop-blur border border-black/[0.06] text-foreground/70 hover:text-brand-ink hover:border-[#6C4BFF]/25 transition">
-                {s}
-              </span>
-            ))}
+          <div className="mt-16 rounded-3xl border border-black/[0.06] bg-white/70 backdrop-blur-xl p-8 md:p-10 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.15)]">
+            <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+              <div className="md:w-1/3">
+                <div className="text-sm uppercase tracking-[0.18em] text-foreground/50 font-semibold">Works everywhere</div>
+                <p className="mt-3 text-lg text-brand-ink">Drop ChatOne into any stack in minutes.</p>
+              </div>
+              <div className="flex-1 flex flex-wrap gap-2.5">
+                {stacks.map((s, i) => (
+                  <motion.span
+                    key={s}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.04 }}
+                    whileHover={{ y: -3, scale: 1.04 }}
+                    className="px-4 py-2 rounded-full bg-white border border-black/[0.06] text-sm text-foreground/75 hover:text-brand-ink hover:border-[#6C4BFF]/30 hover:shadow-md transition cursor-default"
+                  >
+                    {s}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
           </div>
         </Reveal>
       </div>
@@ -671,76 +793,115 @@ export function Integrations() {
 
 /* ---------------- Pricing ---------------- */
 export function Pricing() {
+  const [yearly, setYearly] = useState(false);
   const plans = [
-    { name: "Free", price: "$0", period: "/ forever", cta: "Get started free", featured: false,
+    { name: "Free", monthly: 0, yearly: 0, cta: "Get started free", featured: false,
       desc: "Everything you need to try ChatOne.",
       features: ["100 requests / month", "1 chatbot", "Knowledge base", "Website embed", "Basic analytics"] },
-    { name: "Standard", price: "$29", period: "/ mo", cta: "Start free trial", featured: false,
+    { name: "Standard", monthly: 29, yearly: 23, cta: "Start free trial", featured: false,
       desc: "For growing sites and small teams.",
-      features: ["10,000 requests / month", "3 chatbots", "Advanced knowledge base", "Google Drive & OneDrive sync", "Custom branding", "Usage analytics"] },
-    { name: "Pro", price: "$99", period: "/ mo", cta: "Start free trial", featured: true, badge: "Most popular",
+      features: ["10,000 requests / mo", "3 chatbots", "Drive & OneDrive sync", "Custom branding", "Usage analytics"] },
+    { name: "Pro", monthly: 99, yearly: 79, cta: "Start free trial", featured: true, badge: "Most popular",
       desc: "For businesses that need scale and control.",
-      features: ["25,000 requests / month", "10 chatbots", "Everything in Standard", "Advanced analytics", "API access", "White-label option", "Dedicated support", "Multi-user access"] },
-    { name: "Custom", price: "Tailored", period: "", cta: "Contact our team", featured: false,
+      features: ["25,000 requests / mo", "10 chatbots", "Everything in Standard", "Advanced analytics", "API access", "White-label", "Dedicated support"] },
+    { name: "Custom", monthly: null as number | null, yearly: null as number | null, cta: "Contact our team", featured: false,
       desc: "For enterprise and regulated industries.",
-      features: ["Unlimited requests", "Unlimited chatbots", "Everything in Pro", "Dedicated account manager", "Custom integrations", "SLA guarantee", "CCPA / HIPAA support"] },
+      features: ["Unlimited requests", "Unlimited chatbots", "Everything in Pro", "Dedicated CSM", "Custom integrations", "SLA", "HIPAA support"] },
   ];
   return (
     <section id="pricing" className="relative py-28 md:py-36 px-6">
       <div className="max-w-7xl mx-auto">
-        <SectionHeading
-          center
-          eyebrow="Pricing"
-          title="Simple pricing, including a"
-          highlight="genuinely free plan"
-          desc={`No surprise fees. No "contact us for pricing." Plans built for every size of business.`}
-        />
+        <div className="text-center">
+          <SectionHeading
+            center
+            eyebrow="Pricing"
+            title="Simple pricing, including a"
+            highlight="genuinely free plan"
+            desc={`No surprise fees. No "contact us for pricing." Plans built for every size of business.`}
+          />
+        </div>
 
-        <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
-          {plans.map((p, i) => (
-            <Reveal key={p.name} delay={i * 0.07}>
-              <motion.div
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className={`relative rounded-2xl p-7 h-full flex flex-col transition-all ${
-                  p.featured
-                    ? "bg-white border border-[#6C4BFF]/30 shadow-[0_30px_80px_-30px_rgba(108,75,255,0.45)] lg:scale-[1.03]"
-                    : "bg-white border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-16px_rgba(15,23,42,0.1)] hover:border-[#6C4BFF]/20 hover:shadow-[0_20px_50px_-20px_rgba(108,75,255,0.2)]"
-                }`}
-              >
-                {p.featured && (
-                  <>
-                    <div aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-indigo-50/60 via-white to-white" />
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold px-3 py-1 rounded-full bg-brand-gradient text-white uppercase tracking-wider shadow-lg shadow-[#6C4BFF]/30">
-                      {p.badge}
-                    </span>
-                  </>
-                )}
-                <div className="relative flex flex-col h-full">
-                  <div className="text-sm font-semibold text-brand-ink">{p.name}</div>
-                  <p className="mt-1 text-xs text-foreground/55">{p.desc}</p>
-                  <div className="mt-5 flex items-baseline gap-1">
-                    <span className="font-display text-5xl text-brand-ink leading-none">{p.price}</span>
-                    <span className="text-sm text-foreground/50">{p.period}</span>
-                  </div>
-                  <div className="my-6 h-px bg-black/5" />
-                  <ul className="space-y-2.5 flex-1">
-                    {p.features.map((f) => (
-                      <li key={f} className="text-sm flex items-start gap-2 text-foreground/75">
-                        <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#6C4BFF]" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <button className={`mt-7 w-full rounded-full py-3 text-sm font-semibold transition ${
+        <Reveal delay={0.1}>
+          <div className="mt-10 flex justify-center">
+            <div className="inline-flex items-center gap-1 p-1 rounded-full bg-white border border-black/[0.06] shadow-sm">
+              {([["Monthly", false], ["Yearly", true]] as const).map(([label, val]) => (
+                <button
+                  key={String(label)}
+                  onClick={() => setYearly(val)}
+                  className="relative px-5 py-2 text-sm font-medium rounded-full transition-colors"
+                >
+                  {yearly === val && (
+                    <motion.span layoutId="billpill" className="absolute inset-0 rounded-full bg-brand-gradient shadow-md shadow-[#6C4BFF]/30" transition={{ type: "spring", stiffness: 300, damping: 28 }} />
+                  )}
+                  <span className={`relative z-10 ${yearly === val ? "text-white" : "text-foreground/70"}`}>
+                    {label}{val ? <span className={`ml-1.5 text-[10px] px-1.5 py-0.5 rounded ${yearly ? "bg-white/20 text-white" : "bg-emerald-50 text-emerald-600"}`}>-20%</span> : null}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+          {plans.map((p, i) => {
+            const price = p.monthly === null ? "Tailored" : `$${yearly ? p.yearly : p.monthly}`;
+            const period = p.monthly === null ? "" : p.monthly === 0 ? "/ forever" : yearly ? "/ mo, billed yearly" : "/ month";
+            return (
+              <Reveal key={p.name} delay={i * 0.07}>
+                <motion.div
+                  whileHover={{ y: -6 }}
+                  transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                  className={`relative rounded-3xl p-7 h-full flex flex-col transition-all ${
                     p.featured
-                      ? "bg-brand-gradient text-white shadow-lg shadow-[#6C4BFF]/30 hover:brightness-110 hover:-translate-y-0.5"
-                      : "bg-white text-brand-ink border border-black/10 hover:border-[#6C4BFF]/40 hover:text-[#6C4BFF]"
-                  }`}>{p.cta}</button>
-                </div>
-              </motion.div>
-            </Reveal>
-          ))}
+                      ? "bg-white border-2 border-[#6C4BFF]/40 shadow-[0_40px_100px_-40px_rgba(108,75,255,0.5)] lg:scale-[1.04] lg:-my-2"
+                      : "bg-white border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-20px_rgba(15,23,42,0.1)] hover:border-[#6C4BFF]/25 hover:shadow-[0_25px_60px_-25px_rgba(108,75,255,0.2)]"
+                  }`}
+                >
+                  {p.featured && (
+                    <>
+                      <div aria-hidden className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-b from-indigo-50/70 via-white to-white" />
+                      <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-[11px] font-semibold px-3 py-1.5 rounded-full bg-brand-gradient text-white uppercase tracking-wider shadow-lg shadow-[#6C4BFF]/40 whitespace-nowrap">
+                        <Sparkles className="w-3 h-3 inline -mt-0.5 mr-1" />{p.badge}
+                      </span>
+                    </>
+                  )}
+                  <div className="relative flex flex-col h-full">
+                    <div className="text-sm font-semibold text-brand-ink">{p.name}</div>
+                    <p className="mt-1 text-xs text-foreground/55">{p.desc}</p>
+                    <div className="mt-6 flex items-baseline gap-1 min-h-[56px]">
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={`${p.name}-${yearly}`}
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.25 }}
+                          className="font-display text-5xl text-brand-ink leading-none"
+                        >{price}</motion.span>
+                      </AnimatePresence>
+                      <span className="text-xs text-foreground/50">{period}</span>
+                    </div>
+                    <div className="my-6 h-px bg-black/5" />
+                    <ul className="space-y-2.5 flex-1">
+                      {p.features.map((f) => (
+                        <li key={f} className="text-sm flex items-start gap-2 text-foreground/75">
+                          <span className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${p.featured ? "bg-brand-gradient text-white" : "bg-indigo-50 text-[#6C4BFF]"}`}>
+                            <Check className="w-2.5 h-2.5" />
+                          </span>
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <button className={`mt-7 w-full rounded-full py-3 text-sm font-semibold transition ${
+                      p.featured
+                        ? "bg-brand-gradient text-white shadow-lg shadow-[#6C4BFF]/30 hover:brightness-110 hover:-translate-y-0.5"
+                        : "bg-white text-brand-ink border border-black/10 hover:border-[#6C4BFF]/40 hover:text-[#6C4BFF]"
+                    }`}>{p.cta}</button>
+                  </div>
+                </motion.div>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -751,33 +912,39 @@ export function Pricing() {
 export function FAQ() {
   const items = [
     { q: "How is ChatOne different from other AI chatbots?", a: "ChatOne is trained exclusively on your documents, policies, and products — meaning accurate, brand-aligned answers every time. No generic responses and no irrelevant information, just answers your visitors can trust." },
-    { q: "Is ChatOne really free? What's the catch?", a: "ChatOne has a genuinely free plan with 1 chatbot and 100 requests per month. No credit card required, no time limit. When you need more bots or requests, paid plans start at $29 per month." },
+    { q: "Is ChatOne really free? What's the catch?", a: "ChatOne has a genuinely free plan with 1 chatbot and 100 requests per month. No credit card required, no time limit. When you need more, paid plans start at $29 per month." },
     { q: "How do I add a chatbot to my website?", a: "Under 10 minutes. Create your bot, upload your documents, copy a single line of JavaScript embed code, and paste it before the closing body tag. Works with WordPress, Shopify, React, Squarespace, and any tech stack." },
     { q: "Do you have a WordPress chatbot plugin?", a: "Yes. ChatOne has a dedicated WordPress plugin. Add your chatbot using a simple shortcode — no coding required. It works with WordPress, WooCommerce, and Elementor." },
-    { q: "Can ChatOne handle customer service conversations?", a: "Yes. ChatOne's conversational AI handles FAQs, policy questions, order status, and troubleshooting. If a question falls outside its knowledge base, it can escalate to a human agent or collect contact details for follow-up." },
-    { q: "Does it work for e-commerce stores?", a: "Yes. ChatOne's AI chatbot is widely used on Shopify and WooCommerce. Train it on your product catalog, shipping, and return policies — it handles common order queries automatically." },
+    { q: "Can ChatOne handle customer service conversations?", a: "Yes. ChatOne handles FAQs, policy questions, order status, and troubleshooting. If a question falls outside its knowledge base, it can escalate to a human agent or collect contact details for follow-up." },
+    { q: "Does it work for e-commerce stores?", a: "Yes. ChatOne is widely used on Shopify and WooCommerce. Train it on your product catalog, shipping, and return policies — it handles common order queries automatically." },
   ];
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="faq" className="relative py-28 md:py-36 px-6 bg-gradient-to-b from-white via-surface to-white">
-      <div className="max-w-3xl mx-auto">
-        <SectionHeading
-          center
-          eyebrow="FAQ"
-          title="Questions people ask"
-          highlight="before getting started"
-          desc="Everything you need to know about ChatOne."
-        />
-        <div className="mt-14 space-y-3">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)] gap-12 lg:gap-20">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <SectionHeading
+            eyebrow="FAQ"
+            title="Questions people ask"
+            highlight="before starting"
+            desc="Everything you need to know about ChatOne. Can't find what you're looking for?"
+          />
+          <div className="mt-8"><MagneticButton variant="ghost" icon={ArrowRight}>Contact our team</MagneticButton></div>
+        </div>
+
+        <div className="space-y-3">
           {items.map((it, i) => {
             const active = open === i;
             return (
               <Reveal key={i} delay={i * 0.04}>
-                <div className={`rounded-2xl border transition-all backdrop-blur-xl ${
-                  active
-                    ? "bg-white border-[#6C4BFF]/25 shadow-[0_20px_50px_-25px_rgba(108,75,255,0.25)]"
-                    : "bg-white/70 border-black/[0.06] hover:border-[#6C4BFF]/20"
-                }`}>
+                <motion.div
+                  layout
+                  className={`rounded-2xl border transition-colors ${
+                    active
+                      ? "bg-white border-[#6C4BFF]/25 shadow-[0_20px_50px_-25px_rgba(108,75,255,0.25)]"
+                      : "bg-white/70 backdrop-blur border-black/[0.06] hover:border-[#6C4BFF]/20"
+                  }`}
+                >
                   <button
                     onClick={() => setOpen(active ? null : i)}
                     aria-expanded={active}
@@ -786,9 +953,13 @@ export function FAQ() {
                     <span className={`text-[16px] md:text-lg font-medium transition-colors ${active ? "text-brand-ink" : "text-brand-ink/85 group-hover:text-brand-ink"}`}>
                       {it.q}
                     </span>
-                    <span className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${active ? "bg-brand-gradient text-white shadow-md shadow-[#6C4BFF]/30" : "bg-indigo-50 text-[#6C4BFF]"}`}>
+                    <motion.span
+                      animate={{ rotate: active ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${active ? "bg-brand-gradient text-white shadow-md shadow-[#6C4BFF]/30" : "bg-indigo-50 text-[#6C4BFF]"}`}
+                    >
                       {active ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                    </span>
+                    </motion.span>
                   </button>
                   <AnimatePresence initial={false}>
                     {active && (
@@ -803,7 +974,7 @@ export function FAQ() {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               </Reveal>
             );
           })}
@@ -817,12 +988,33 @@ export function FAQ() {
 export function CTA() {
   return (
     <section className="relative py-24 px-6">
-      <div className="relative max-w-6xl mx-auto rounded-[2rem] overflow-hidden border border-[#6C4BFF]/15 bg-white p-14 md:p-20 text-center shadow-[0_40px_100px_-40px_rgba(108,75,255,0.35)]">
-        <div className="pointer-events-none absolute inset-0 mesh-bg opacity-90" />
+      <div className="relative max-w-6xl mx-auto rounded-[2rem] overflow-hidden border border-[#6C4BFF]/15 bg-gradient-to-br from-white via-indigo-50/40 to-white p-14 md:p-20 text-center shadow-[0_40px_100px_-40px_rgba(108,75,255,0.4)]">
+        <div className="pointer-events-none absolute inset-0 grid-bg opacity-60" />
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-[#6C4BFF]/25 blur-[120px] animate-blob" />
-          <div className="absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full bg-[#3B82F6]/20 blur-[130px] animate-blob" style={{ animationDelay: "-6s" }} />
+          <motion.div
+            animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-[#6C4BFF]/25 blur-[120px]"
+          />
+          <motion.div
+            animate={{ x: [0, -30, 0], y: [0, 20, 0] }}
+            transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full bg-[#3B82F6]/25 blur-[130px]"
+          />
         </div>
+        <motion.div
+          animate={{ y: [0, -8, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="hidden md:flex absolute left-10 top-16 glass-card rounded-2xl px-3.5 py-2 items-center gap-2 text-xs"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Aria replied in 0.4s
+        </motion.div>
+        <motion.div
+          animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: -2 }}
+          className="hidden md:flex absolute right-10 bottom-20 glass-card rounded-2xl px-3.5 py-2 items-center gap-2 text-xs"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-[#6C4BFF]" /> 12,483 messages today
+        </motion.div>
+
         <div className="relative">
           <Reveal>
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#6C4BFF]/20 bg-white/70 backdrop-blur text-[11px] uppercase tracking-[0.15em] text-brand-ink/70">
@@ -841,6 +1033,7 @@ export function CTA() {
             <div className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-foreground/55">
               <span className="inline-flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> Setup in under 10 minutes</span>
               <span className="inline-flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> Cancel anytime</span>
+              <span className="inline-flex items-center gap-1.5"><Check className="w-4 h-4 text-emerald-500" /> No credit card</span>
             </div>
           </Reveal>
         </div>
@@ -857,18 +1050,45 @@ export function Footer() {
     { h: "Resources", l: ["Blog", "Documentation", "Comparisons", "About"] },
     { h: "Legal", l: ["Privacy", "Terms", "Sitemap", "Contact"] },
   ];
+  const socials = [
+    { i: Twitter, l: "Twitter" }, { i: Github, l: "GitHub" }, { i: Linkedin, l: "LinkedIn" }, { i: Youtube, l: "YouTube" },
+  ];
   return (
-    <footer className="relative pt-20 pb-10 px-6 bg-gradient-to-b from-white to-surface border-t border-black/5">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6C4BFF]/25 to-transparent" />
-      <div className="max-w-7xl mx-auto grid md:grid-cols-6 gap-10">
+    <footer className="relative pt-20 pb-10 px-6 bg-gradient-to-b from-white to-surface border-t border-black/5 overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#6C4BFF]/40 to-transparent" />
+      <div className="pointer-events-none absolute -bottom-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-[#6C4BFF]/10 blur-[130px]" />
+
+      <Reveal>
+        <div className="relative max-w-7xl mx-auto rounded-3xl border border-black/[0.06] bg-white/80 backdrop-blur-xl p-8 md:p-10 mb-16 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.15)] flex flex-col md:flex-row md:items-center gap-6">
+          <div className="flex-1">
+            <h3 className="font-display text-2xl md:text-3xl text-brand-ink tracking-tight">Get product updates in your inbox</h3>
+            <p className="mt-1.5 text-sm text-foreground/60">One short email a month. No spam, ever.</p>
+          </div>
+          <form onSubmit={(e) => e.preventDefault()} className="flex-1 flex items-center gap-2 rounded-full bg-white border border-black/[0.08] p-1.5 pl-5 shadow-sm focus-within:border-[#6C4BFF]/40 transition">
+            <input type="email" placeholder="you@company.com" className="flex-1 bg-transparent outline-none text-sm placeholder:text-foreground/40" />
+            <button type="submit" className="inline-flex items-center gap-1.5 rounded-full bg-brand-gradient text-white text-sm font-semibold px-4 py-2 shadow-md shadow-[#6C4BFF]/30 hover:brightness-110 transition">
+              Subscribe <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </form>
+        </div>
+      </Reveal>
+
+      <div className="relative max-w-7xl mx-auto grid md:grid-cols-6 gap-10">
         <div className="md:col-span-2">
           <img src={logo.url} alt="ChatOne" className="h-8" />
           <p className="mt-5 text-sm text-foreground/60 max-w-xs leading-relaxed">
-            The AI chatbot for websites trusted by businesses worldwide. Build, train, and deploy in minutes. No coding required.
+            The AI chatbot for websites trusted by businesses worldwide. Build, train, and deploy in minutes.
           </p>
           <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-black/[0.06] text-xs text-foreground/60 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             All systems operational
+          </div>
+          <div className="mt-6 flex items-center gap-2">
+            {socials.map((s) => (
+              <a key={s.l} href="#" aria-label={s.l} className="w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center text-foreground/60 hover:text-[#6C4BFF] hover:border-[#6C4BFF]/30 hover:-translate-y-0.5 transition-all">
+                <s.i className="w-4 h-4" />
+              </a>
+            ))}
           </div>
         </div>
         {cols.map((c) => (
@@ -876,13 +1096,18 @@ export function Footer() {
             <div className="text-sm font-semibold text-brand-ink">{c.h}</div>
             <ul className="mt-4 space-y-2.5">
               {c.l.map((i) => (
-                <li key={i}><a href="#" className="text-sm text-foreground/60 hover:text-[#6C4BFF] transition">{i}</a></li>
+                <li key={i}>
+                  <a href="#" className="text-sm text-foreground/60 hover:text-[#6C4BFF] transition-colors relative group inline-flex">
+                    {i}
+                    <span className="absolute left-0 -bottom-0.5 h-px w-full scale-x-0 group-hover:scale-x-100 origin-left bg-[#6C4BFF]/60 transition-transform" />
+                  </a>
+                </li>
               ))}
             </ul>
           </div>
         ))}
       </div>
-      <div className="mt-16 pt-6 border-t border-black/5 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-foreground/50">
+      <div className="relative mt-16 pt-6 border-t border-black/5 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-foreground/50">
         <span>© 2026 ChatOne. All rights reserved.</span>
         <span>The AI chatbot for websites.</span>
       </div>
