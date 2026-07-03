@@ -838,87 +838,332 @@ function FeatureVisual({ kind, variant }: { kind: FeatureItem["visual"]; variant
 }
 
 /* ---------------- How it works ---------------- */
+type Step = {
+  code: string;
+  title: string;
+  desc: string;
+  visual: "upload" | "train" | "brand" | "embed" | "live";
+};
+
+const HIW_STEPS: Step[] = [
+  { code: "01a", title: "Drop in what you know", desc: "Upload PDFs, DOCX, or paste a URL. ChatOne ingests, chunks, and indexes your knowledge in seconds.", visual: "upload" },
+  { code: "01b", title: "Shape its personality", desc: "Set the tone, guardrails, and system prompt. Your assistant sounds unmistakably like your brand.", visual: "train" },
+  { code: "01c", title: "Dress it in your brand", desc: "Logo, colors, radius, position — every pixel tunable so the widget feels native to your site.", visual: "brand" },
+  { code: "01d", title: "One line. Anywhere.", desc: "Paste a single script tag into WordPress, Shopify, React, or plain HTML — you're wired up in a minute.", visual: "embed" },
+  { code: "01e", title: "Answer 24/7. Improve daily.", desc: "Live conversations, gap detection, and continuous learning — your assistant gets sharper with every chat.", visual: "live" },
+];
+
 export function HowItWorks() {
-  const steps = [
-    { n: "01", t: "Create your bot", d: "Name your bot, choose its tone — friendly, professional, or technical — and write a system prompt that captures your brand voice.", icon: Bot },
-    { n: "02", t: "Upload your knowledge", d: "Add PDFs, DOCX files, or paste any website URL. ChatOne reads your content and builds a smart knowledge base automatically.", icon: Upload },
-    { n: "03", t: "Customize the look", d: "Upload your logo, choose brand colors, and write a welcome message. It should feel like a natural part of your site.", icon: Wand2 },
-    { n: "04", t: "Embed and go live", d: "Copy one line of code. Paste it into your website. Your AI assistant is live and answering visitors 24/7.", icon: Send },
-  ];
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 30%"] });
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
+
+  // Split progress into equal segments per step
+  const segments = HIW_STEPS.length;
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    return scrollYProgress.on("change", (v) => {
+      // Bias so the first & last steps have a moment to breathe
+      const t = Math.min(0.9999, Math.max(0, (v - 0.03) / 0.94));
+      const idx = Math.min(segments - 1, Math.floor(t * segments));
+      setActive(idx);
+    });
+  }, [scrollYProgress, segments]);
+
+  const barProgress = useTransform(scrollYProgress, [0.03, 0.97], ["0%", "100%"]);
 
   return (
-    <section id="how-it-works" className="relative py-28 md:py-36 px-6 bg-gradient-to-b from-white via-surface to-white overflow-hidden">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center">
-          <SectionHeading
-            center
-            eyebrow="How it works"
-            title="From zero to live chatbot in"
-            highlight="under 10 minutes"
-            desc="A four-step flow designed to feel effortless — no engineers required."
-          />
+    <section id="how-it-works" ref={wrapRef} className="relative" style={{ height: `${100 + segments * 60}vh` }}>
+      <div className="sticky top-0 h-screen flex flex-col overflow-hidden bg-white">
+        {/* Header: Problem / Solution */}
+        <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-16 md:pt-20 grid md:grid-cols-2 gap-8 md:gap-16">
+          <div>
+            <div className="text-xs font-mono tracking-widest text-brand-ink/50">00 &nbsp; PROBLEM</div>
+            <p className="mt-3 text-brand-ink/70 text-[15px] md:text-base leading-relaxed max-w-sm">
+              Teams either duct-tape generic chatbots or spend weeks wiring up custom AI — both approaches leak brand, break on updates, and frustrate visitors.
+            </p>
+          </div>
+          <div>
+            <div className="text-xs font-mono tracking-widest text-brand-ink/50">01 &nbsp; SOLUTION</div>
+            <h2 className="mt-3 font-display text-2xl md:text-4xl leading-[1.1] tracking-tight text-brand-ink">
+              An AI assistant that learns <span className="text-gradient-brand italic">your</span> product,
+              speaks <span className="text-gradient-brand italic">your</span> voice, and ships in minutes.
+            </h2>
+          </div>
         </div>
 
-        <div ref={ref} className="relative mt-20">
-          <div aria-hidden className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px bg-black/[0.06]">
-            <motion.div style={{ height: lineHeight }} className="w-full bg-gradient-to-b from-[#6C4BFF] to-[#3B82F6] rounded-full" />
-          </div>
+        {/* Brand panel */}
+        <div className="relative z-10 flex-1 mx-4 md:mx-8 mt-8 md:mt-10 mb-10 md:mb-12">
+          <div
+            className="relative w-full h-full rounded-[36px] overflow-hidden"
+            style={{
+              background:
+                "linear-gradient(135deg, #01013A 0%, #1B0D6B 40%, #4B1FB8 75%, #9132FB 100%)",
+            }}
+          >
+            {/* Ambient glow */}
+            <div aria-hidden className="pointer-events-none absolute inset-0">
+              <div className="absolute -top-24 left-1/3 w-[520px] h-[520px] rounded-full blur-3xl opacity-30" style={{ background: "radial-gradient(circle, #0C87FD 0%, transparent 60%)" }} />
+              <div className="absolute -bottom-24 -right-24 w-[520px] h-[520px] rounded-full blur-3xl opacity-30" style={{ background: "radial-gradient(circle, #9132FB 0%, transparent 60%)" }} />
+              <div className="absolute inset-0 noise mix-blend-overlay" />
+            </div>
 
-          <div className="space-y-14 md:space-y-24">
-            {steps.map((s, i) => {
-              const right = i % 2 === 1;
-              return (
-                <motion.div
-                  key={s.n}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
-                  className={`relative grid md:grid-cols-2 gap-8 items-center ${right ? "md:[&>*:first-child]:order-2" : ""}`}
-                >
-                  <div aria-hidden className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-8 md:top-1/2 md:-translate-y-1/2 z-10">
-                    <div className="w-4 h-4 rounded-full bg-brand-gradient ring-4 ring-white shadow-lg shadow-[#6C4BFF]/40" />
-                  </div>
+            {/* Corner frame lines (crosshair-style, like reference) */}
+            <div aria-hidden className="pointer-events-none absolute inset-0">
+              <div className="absolute left-[38%] top-6 bottom-6 w-px bg-white/12" />
+              <div className="absolute right-[6%] top-6 bottom-6 w-px bg-white/8" />
+              <div className="absolute left-6 right-6 top-[14%] h-px bg-white/8" />
+            </div>
 
-                  <div className={`pl-16 md:pl-0 ${right ? "md:pl-16" : "md:pr-16 md:text-right"}`}>
-                    <span className="font-display text-6xl md:text-7xl text-gradient-brand leading-none">{s.n}</span>
-                    <h3 className="mt-4 text-2xl md:text-3xl font-semibold text-brand-ink tracking-tight">{s.t}</h3>
-                    <p className="mt-3 text-[15px] text-foreground/60 leading-relaxed max-w-md md:inline-block">{s.d}</p>
-                  </div>
+            {/* Left: stacked visuals, crossfade based on active */}
+            <div className="absolute inset-y-0 left-0 w-full md:w-[62%] flex items-center justify-center px-6 md:px-12">
+              <div className="relative w-full max-w-[520px] aspect-[5/6]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={HIW_STEPS[active].visual}
+                    initial={{ opacity: 0, y: 24, scale: 0.96, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -24, scale: 0.98, filter: "blur(6px)" }}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute inset-0"
+                  >
+                    <StepVisual kind={HIW_STEPS[active].visual} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
 
-                  <div className={`pl-16 md:pl-0 ${right ? "md:pr-16" : "md:pl-16"}`}>
-                    <TiltCard intensity={6} className="rounded-3xl p-8 bg-white border border-black/[0.06] shadow-[0_20px_60px_-30px_rgba(108,75,255,0.25)] relative overflow-hidden">
-                      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-60" />
-                      <div className="relative flex items-center gap-5">
-                        <div className="w-16 h-16 rounded-2xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/30 shrink-0">
-                          <s.icon className="w-7 h-7" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="h-2.5 w-2/3 rounded-full bg-foreground/10" />
-                          <div className="mt-2 h-2.5 w-1/2 rounded-full bg-foreground/10" />
-                          <div className="mt-4 h-2 w-full rounded-full bg-indigo-50 overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              whileInView={{ width: `${40 + i * 15}%` }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-                              className="h-full bg-brand-gradient"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </TiltCard>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {/* Right: sticky text panel */}
+            <div className="absolute inset-y-0 right-0 w-full md:w-[38%] flex items-center px-6 md:px-12 pointer-events-none">
+              <div className="w-full max-w-md">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={HIW_STEPS[active].code}
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="text-xs font-mono tracking-widest text-white/60">{HIW_STEPS[active].code}</div>
+                    <h3 className="mt-3 font-display text-3xl md:text-[40px] leading-[1.05] tracking-tight text-white">
+                      {HIW_STEPS[active].title}
+                    </h3>
+                    <p className="mt-4 text-[15px] md:text-base leading-relaxed text-white/75 max-w-sm">
+                      {HIW_STEPS[active].desc}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Right edge: dot progress */}
+            <div className="absolute right-5 md:right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3">
+              {HIW_STEPS.map((_, i) => (
+                <div key={i} className="relative w-2 h-2">
+                  <div className="absolute inset-0 rounded-full bg-white/25" />
+                  <motion.div
+                    animate={{ scale: i === active ? 1 : 0, opacity: i === active ? 1 : 0 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute -inset-1 rounded-full bg-white shadow-[0_0_16px_rgba(255,255,255,0.7)]"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom progress bar */}
+            <div className="absolute left-6 right-6 bottom-5 h-[2px] rounded-full bg-white/10 overflow-hidden">
+              <motion.div className="h-full bg-gradient-to-r from-[#0C87FD] via-white to-[#9132FB]" style={{ width: barProgress }} />
+            </div>
+
+            {/* Step counter bottom-left */}
+            <div className="absolute left-6 bottom-8 text-white/60 font-mono text-[11px] tracking-widest">
+              {String(active + 1).padStart(2, "0")} / {String(segments).padStart(2, "0")}
+            </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function StepVisual({ kind }: { kind: Step["visual"] }) {
+  if (kind === "upload") {
+    const files = [
+      { name: "product-guide.pdf", size: "2.4 MB", tag: "PDF", pct: 100 },
+      { name: "help-center.com", size: "312 pages", tag: "URL", pct: 76 },
+      { name: "release-notes.docx", size: "180 KB", tag: "DOC", pct: 42 },
+    ];
+    return (
+      <div className="w-full h-full rounded-3xl bg-white/[0.06] backdrop-blur-md border border-white/15 p-6 flex flex-col gap-4 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <div className="text-white/90 text-sm font-semibold">Knowledge sources</div>
+          <div className="text-[10px] font-mono text-white/50">INGESTING…</div>
+        </div>
+        <div className="space-y-3">
+          {files.map((f, i) => (
+            <motion.div
+              key={f.name}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.15 + i * 0.12, duration: 0.5 }}
+              className="rounded-2xl bg-white/[0.06] border border-white/10 px-4 py-3 flex items-center gap-3"
+            >
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0C87FD] to-[#9132FB] flex items-center justify-center text-white text-[10px] font-bold">{f.tag}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm text-white/95 font-medium truncate">{f.name}</div>
+                <div className="text-[11px] text-white/50">{f.size}</div>
+              </div>
+              <div className="text-[11px] font-mono text-white/70 w-10 text-right">{f.pct}%</div>
+            </motion.div>
+          ))}
+        </div>
+        <div className="mt-auto rounded-2xl border border-dashed border-white/25 p-4 text-center text-white/60 text-xs">
+          Drop files or paste a URL
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "train") {
+    const tones = ["Friendly", "Expert", "Concise", "Playful"];
+    return (
+      <div className="w-full h-full rounded-3xl bg-white/[0.06] backdrop-blur-md border border-white/15 p-6 flex flex-col gap-4 shadow-2xl">
+        <div className="text-white/90 text-sm font-semibold">Personality</div>
+        <div className="flex flex-wrap gap-2">
+          {tones.map((t, i) => (
+            <motion.span
+              key={t}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.08 }}
+              className={`text-[11px] font-semibold px-3 py-1.5 rounded-full ${i === 0 ? "bg-white text-[#4B1FB8]" : "bg-white/10 text-white/80 border border-white/15"}`}
+            >
+              {t}
+            </motion.span>
+          ))}
+        </div>
+        <div className="mt-2 rounded-2xl bg-black/25 border border-white/10 p-4 font-mono text-[12px] leading-relaxed text-white/80">
+          <span className="text-white/40">// system</span>{"\n"}
+          You are ChatOne, a warm, precise assistant.{"\n"}
+          Always cite the source. Never invent facts.
+        </div>
+        <div className="mt-auto space-y-2">
+          <div className="max-w-[70%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm bg-white/10 text-white/90">Do you ship to Canada?</div>
+          <div className="max-w-[80%] ml-auto rounded-2xl rounded-br-sm px-4 py-2.5 text-sm bg-gradient-to-br from-[#0C87FD] to-[#9132FB] text-white">
+            Yes! Free shipping over $75, 3–5 business days.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "brand") {
+    return (
+      <div className="w-full h-full rounded-3xl bg-white/[0.06] backdrop-blur-md border border-white/15 p-6 grid grid-cols-2 gap-4 shadow-2xl">
+        <div className="flex flex-col gap-4">
+          <div>
+            <div className="text-[10px] font-mono tracking-wider text-white/50">PALETTE</div>
+            <div className="mt-2 flex gap-2">
+              {["#9132FB", "#0C87FD", "#01013A", "#F3EEE3"].map((c) => (
+                <motion.div key={c} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="w-9 h-9 rounded-full ring-2 ring-white/80 shadow-lg" style={{ background: c }} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="text-[10px] font-mono tracking-wider text-white/50">RADIUS</div>
+            <div className="mt-2 flex gap-2">
+              {[6, 14, 22].map((r) => (
+                <div key={r} className="w-9 h-9 border-2 border-white/50" style={{ borderRadius: r }} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="text-[10px] font-mono tracking-wider text-white/50">POSITION</div>
+            <div className="mt-2 grid grid-cols-2 gap-1.5 w-20">
+              <div className="h-4 rounded border border-white/30" />
+              <div className="h-4 rounded border border-white/30" />
+              <div className="h-4 rounded border border-white/30" />
+              <div className="h-4 rounded bg-white" />
+            </div>
+          </div>
+        </div>
+        <div className="relative rounded-2xl bg-gradient-to-br from-[#9132FB] to-[#0C87FD] p-3 flex flex-col justify-end">
+          <div className="rounded-xl bg-white/95 p-3 text-brand-ink text-xs shadow-2xl">
+            <div className="font-semibold">ChatOne</div>
+            <div className="opacity-60 text-[10px] mt-0.5">How can I help today?</div>
+          </div>
+          <motion.div
+            initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }}
+            className="mt-3 self-end w-12 h-12 rounded-full bg-white shadow-2xl flex items-center justify-center"
+          >
+            <MessageSquare className="w-5 h-5 text-[#9132FB]" />
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "embed") {
+    return (
+      <div className="w-full h-full rounded-3xl bg-[#0A0A2A]/80 backdrop-blur-md border border-white/15 overflow-hidden font-mono text-[13px] shadow-2xl flex flex-col">
+        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/10">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
+          <span className="ml-3 text-[11px] text-white/50 font-sans">index.html</span>
+        </div>
+        <pre className="p-5 leading-relaxed text-white/85 flex-1">
+<span className="text-white/40">{"<!-- Paste before </body> -->"}</span>{"\n"}
+<span className="text-[#A8CBFF]">{"<script"}</span>{" "}
+<span className="text-[#C9B8FF]">{"src"}</span>=<span className="text-[#FFD98A]">{'"chatone.io/w.js"'}</span>{"\n        "}
+<span className="text-[#C9B8FF]">{"data-id"}</span>=<span className="text-[#FFD98A]">{'"co_9K2H"'}</span>{"\n        "}
+<span className="text-[#C9B8FF]">{"defer"}</span>
+<span className="text-[#A8CBFF]">{"></script>"}</span>
+        </pre>
+        <div className="px-5 pb-5 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-[11px] font-sans text-white/70">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Deployed
+          </div>
+          <div className="text-[11px] font-sans text-white/50">42 ms</div>
+        </div>
+      </div>
+    );
+  }
+
+  // live
+  const bars = [30, 55, 42, 70, 58, 82, 68, 90];
+  return (
+    <div className="w-full h-full rounded-3xl bg-white/[0.06] backdrop-blur-md border border-white/15 p-6 flex flex-col gap-4 shadow-2xl">
+      <div className="flex items-baseline justify-between">
+        <div>
+          <div className="text-[10px] font-mono tracking-wider text-white/50">CONVERSATIONS · 7D</div>
+          <div className="mt-1 text-3xl font-bold text-white">12,847</div>
+        </div>
+        <div className="text-[11px] font-semibold px-2 py-1 rounded-full bg-emerald-400/20 text-emerald-300">+24.3%</div>
+      </div>
+      <div className="h-28 flex items-end gap-2">
+        {bars.map((h, i) => (
+          <motion.div
+            key={i}
+            initial={{ height: 0 }}
+            animate={{ height: `${h}%` }}
+            transition={{ delay: 0.05 * i, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 rounded-t-md bg-gradient-to-t from-[#0C87FD] to-[#9132FB]"
+          />
+        ))}
+      </div>
+      <div className="mt-auto space-y-2">
+        {[
+          { q: "Where's my order?", n: 342 },
+          { q: "Do you offer refunds?", n: 218 },
+          { q: "Book a demo", n: 164 },
+        ].map((r) => (
+          <div key={r.q} className="flex items-center justify-between rounded-xl bg-white/[0.05] border border-white/10 px-3 py-2">
+            <span className="text-sm text-white/85 truncate">{r.q}</span>
+            <span className="text-[11px] font-mono text-white/50">×{r.n}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
