@@ -506,75 +506,334 @@ export function WhyChatOne() {
 }
 
 /* ---------------- Features ---------------- */
+type FeatureItem = {
+  icon: any;
+  eyebrow: string;
+  title: string;
+  desc: string;
+  variant: "violet" | "ink" | "cream" | "blue";
+  visual: "kb" | "tone" | "sync" | "brand" | "embed" | "analytics";
+};
+
+const FEATURE_ITEMS: FeatureItem[] = [
+  { icon: BookOpen, eyebrow: "Knowledge", title: "Feed it anything.\nIt learns instantly.", desc: "Drop PDFs, DOCX, or a URL — ChatOne crawls, chunks, and indexes automatically.", variant: "violet", visual: "kb" },
+  { icon: Sparkles, eyebrow: "Personality", title: "A voice that sounds\nunmistakably yours.", desc: "Dial in tone, style, and guardrails with prompt-level control.", variant: "ink", visual: "tone" },
+  { icon: Cloud, eyebrow: "Sync", title: "Always in sync with\nyour source of truth.", desc: "Connect Google Drive & OneDrive — updates stream in live.", variant: "cream", visual: "sync" },
+  { icon: Palette, eyebrow: "Brand", title: "Pixel-perfect to your\nbrand, not a bubble.", desc: "Logo, colors, radius, position — every detail tunable.", variant: "violet", visual: "brand" },
+  { icon: Code2, eyebrow: "Embed", title: "One line of code.\nAnywhere on the web.", desc: "WordPress, Shopify, Wix, React, Vue, plain HTML — works everywhere.", variant: "blue", visual: "embed" },
+  { icon: BarChart3, eyebrow: "Insights", title: "See what your users\nactually ask for.", desc: "Live conversations, top questions, knowledge gaps — all in one view.", variant: "ink", visual: "analytics" },
+];
+
 export function Features() {
-  const items = [
-    { icon: BookOpen, title: "Knowledge Base", desc: "Upload PDFs, DOCX, or TXT — or point ChatOne to any URL. It crawls and learns automatically.", tags: ["PDF", "Crawler", "URL"], accent: "from-violet-500 to-indigo-500" },
-    { icon: Sparkles, title: "Custom Tone Training", desc: "Set the exact personality — friendly, professional, technical — or write your own system prompt.", tags: ["Tone", "Prompts", "Voice"], accent: "from-fuchsia-500 to-pink-500" },
-    { icon: Cloud, title: "Cloud Sync", desc: "Connect Google Drive and OneDrive so your chatbot always has the latest documents.", tags: ["Drive", "OneDrive", "Live"], accent: "from-sky-500 to-blue-500" },
-    { icon: Palette, title: "Custom Branding", desc: "Upload your logo, choose brand colors, and design the widget. Your brand, not a generic bubble.", tags: ["Logo", "Theme", "Widget"], accent: "from-emerald-500 to-teal-500" },
-    { icon: Code2, title: "Easy Embedding", desc: "One line of code. Works on WordPress, Shopify, Wix, React, Vue, HTML — every tech stack.", tags: ["JS", "WP", "React"], accent: "from-amber-500 to-orange-500" },
-    { icon: BarChart3, title: "Usage Tracking", desc: "Monitor conversations, track questions, and identify gaps in your knowledge base.", tags: ["Logs", "Reports", "Insights"], accent: "from-rose-500 to-red-500" },
-  ];
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
+
+  // Compute translate distance based on rendered widths at runtime
+  const [distance, setDistance] = useState(0);
+  useEffect(() => {
+    const measure = () => {
+      if (!trackRef.current) return;
+      const total = trackRef.current.scrollWidth;
+      const view = trackRef.current.clientWidth;
+      setDistance(Math.max(0, total - view));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  const x = useTransform(scrollYProgress, [0.05, 0.95], [0, -distance]);
+  const xSpring = useSpring(x, { stiffness: 120, damping: 26, mass: 0.4 });
+  const progressWidth = useTransform(scrollYProgress, [0.05, 0.95], ["0%", "100%"]);
+
   return (
-    <section id="features" className="relative py-28 md:py-36 px-6 overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-indigo-50/60 via-transparent to-transparent" />
-      <div className="relative max-w-7xl mx-auto">
-        <div className="text-center"><SectionHeading
-          center
-          eyebrow="Features"
-          title="Everything you need to build a"
-          highlight="smart AI chatbot"
-          desc="Six core features that take you from zero to a fully deployed AI website assistant."
-        /></div>
-        <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((f, i) => (
-            <Reveal key={f.title} delay={i * 0.05}>
-              <FeatureCard {...f} />
-            </Reveal>
-          ))}
+    <section
+      id="features"
+      ref={wrapRef}
+      className="relative"
+      style={{ height: `${100 + FEATURE_ITEMS.length * 55}vh` }}
+    >
+      <div className="sticky top-0 h-screen flex flex-col overflow-hidden bg-gradient-to-b from-white via-[#F6F4FF] to-white">
+        {/* soft brand mesh */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full blur-3xl opacity-40" style={{ background: "radial-gradient(circle, #C9B8FF 0%, transparent 60%)" }} />
+          <div className="absolute -bottom-40 right-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-30" style={{ background: "radial-gradient(circle, #A8CBFF 0%, transparent 60%)" }} />
+        </div>
+
+        {/* Header row */}
+        <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-24 md:pt-28">
+          <div className="flex items-end justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <span className="eyebrow">
+                <Sparkles className="w-3 h-3" /> Features
+              </span>
+            </div>
+            <div className="hidden md:flex items-center gap-3 text-xs font-medium text-brand-ink/50">
+              <span>Scroll</span>
+              <div className="h-[2px] w-28 rounded-full bg-brand-ink/10 overflow-hidden">
+                <motion.div className="h-full bg-gradient-to-r from-[#9132FB] to-[#0C87FD]" style={{ width: progressWidth }} />
+              </div>
+            </div>
+          </div>
+          <h2 className="mt-6 max-w-4xl font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
+            Everything you need to ship a{" "}
+            <span className="text-gradient-brand italic">smart AI assistant</span>.
+          </h2>
+        </div>
+
+        {/* Horizontal track */}
+        <div className="relative z-10 flex-1 flex items-center mt-8 md:mt-12">
+          <motion.div
+            ref={trackRef}
+            style={{ x: xSpring }}
+            className="flex gap-6 md:gap-8 pl-6 md:pl-10 pr-[20vw] will-change-transform"
+          >
+            {FEATURE_ITEMS.map((f, i) => (
+              <FeatureCard key={f.title} item={f} index={i} />
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
 
-function FeatureCard({ icon: Icn, title, desc, tags, accent }: { icon: any; title: string; desc: string; tags: string[]; accent: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState({ x: 50, y: 50 });
+const VARIANT_STYLES: Record<FeatureItem["variant"], { bg: string; text: string; sub: string; chip: string; ring: string }> = {
+  violet: { bg: "bg-[#E6DBFF]", text: "text-[#1A0B4A]", sub: "text-[#1A0B4A]/70", chip: "bg-white/70 text-[#4B1FB8] border-[#4B1FB8]/15", ring: "ring-white/60" },
+  ink:    { bg: "bg-[#0B0B2E]", text: "text-white",     sub: "text-white/70",     chip: "bg-white/10 text-white border-white/15",         ring: "ring-white/10" },
+  cream:  { bg: "bg-[#F3EEE3]", text: "text-[#1A0B4A]", sub: "text-[#1A0B4A]/65", chip: "bg-white text-[#4B1FB8] border-[#4B1FB8]/15",   ring: "ring-black/5" },
+  blue:   { bg: "bg-[#DCEBFF]", text: "text-[#031B4E]", sub: "text-[#031B4E]/70", chip: "bg-white/80 text-[#0C87FD] border-[#0C87FD]/20", ring: "ring-white/60" },
+};
+
+function FeatureCard({ item, index }: { item: FeatureItem; index: number }) {
+  const s = VARIANT_STYLES[item.variant];
+  const Icn = item.icon;
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        setPos({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 });
-      }}
+    <motion.article
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-20%" }}
+      transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 220, damping: 18 }}
-      className="relative rounded-3xl p-7 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-20px_rgba(15,23,42,0.12)] hover:border-[#6C4BFF]/25 hover:shadow-[0_25px_60px_-25px_rgba(108,75,255,0.25)] transition-all overflow-hidden group"
+      className={`relative shrink-0 w-[82vw] sm:w-[62vw] md:w-[46vw] lg:w-[36vw] xl:w-[32vw] h-[62vh] md:h-[68vh] rounded-[32px] overflow-hidden ${s.bg} ${s.text} shadow-[0_30px_80px_-40px_rgba(15,10,60,0.35)] ring-1 ${s.ring}`}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `radial-gradient(320px 240px at ${pos.x}% ${pos.y}%, rgba(108,75,255,0.10), transparent 70%)` }}
-      />
-      <div className="relative">
-        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${accent} text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500`}>
-          <Icn className="w-5 h-5" />
+      {/* Top: text */}
+      <div className="relative p-8 md:p-10">
+        <div className={`inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 rounded-full border ${s.chip}`}>
+          <Icn className="w-3.5 h-3.5" /> {item.eyebrow}
         </div>
-        <h3 className="mt-6 text-xl font-semibold text-brand-ink tracking-tight">{title}</h3>
-        <p className="mt-2 text-[15px] text-foreground/60 leading-relaxed">{desc}</p>
-        <div className="mt-6 flex flex-wrap gap-1.5">
-          {tags.map((t) => (
-            <span key={t} className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-indigo-50/70 text-[#4c39c9] border border-indigo-100/80">
-              {t}
-            </span>
+        <h3 className="mt-6 font-display text-3xl md:text-[40px] leading-[1.05] tracking-tight whitespace-pre-line">
+          {item.title}
+        </h3>
+        <p className={`mt-4 max-w-md text-[15px] md:text-base leading-relaxed ${s.sub}`}>{item.desc}</p>
+      </div>
+
+      {/* Bottom: visual */}
+      <div className="absolute inset-x-0 bottom-0 h-[46%] md:h-[48%] px-6 md:px-8 pb-6 md:pb-8">
+        <FeatureVisual kind={item.visual} variant={item.variant} />
+      </div>
+    </motion.article>
+  );
+}
+
+function FeatureVisual({ kind, variant }: { kind: FeatureItem["visual"]; variant: FeatureItem["variant"] }) {
+  const dark = variant === "ink";
+  const surface = dark ? "bg-white/[0.06] border-white/10 text-white" : "bg-white border-black/5 text-brand-ink";
+  const subtext = dark ? "text-white/60" : "text-brand-ink/60";
+
+  if (kind === "kb") {
+    const files = [
+      { name: "brand-guide.pdf", size: "2.4 MB", tag: "PDF" },
+      { name: "help-center.com", size: "312 pages", tag: "URL" },
+      { name: "product.docx", size: "180 KB", tag: "DOC" },
+    ];
+    return (
+      <div className={`relative w-full h-full rounded-2xl border p-4 md:p-5 backdrop-blur ${surface} overflow-hidden`}>
+        <div className={`text-xs font-medium ${subtext}`}>Ingesting sources…</div>
+        <div className="mt-3 space-y-2">
+          {files.map((f, i) => (
+            <motion.div
+              key={f.name}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 + i * 0.12 }}
+              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 ${dark ? "bg-white/[0.05]" : "bg-brand-ink/[0.03]"}`}
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#9132FB] to-[#0C87FD] flex items-center justify-center text-white text-[10px] font-bold">{f.tag}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium truncate">{f.name}</div>
+                <div className={`text-[11px] ${subtext}`}>{f.size}</div>
+              </div>
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 + i * 0.15, duration: 0.9 }}
+                className="w-16 h-1.5 rounded-full bg-gradient-to-r from-[#9132FB] to-[#0C87FD]"
+              />
+            </motion.div>
           ))}
         </div>
-        <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[#6C4BFF] opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all">
-          Learn more <ArrowRight className="w-3.5 h-3.5" />
+      </div>
+    );
+  }
+
+  if (kind === "tone") {
+    return (
+      <div className={`relative w-full h-full rounded-2xl border p-5 ${surface} flex flex-col justify-end gap-3`}>
+        <div className="absolute top-4 right-4 flex gap-1.5">
+          {["Friendly", "Expert", "Concise"].map((t, i) => (
+            <span key={t} className={`text-[10px] font-semibold px-2 py-1 rounded-full ${i === 1 ? "bg-gradient-to-r from-[#9132FB] to-[#0C87FD] text-white" : dark ? "bg-white/10 text-white/70" : "bg-brand-ink/[0.06]"}`}>{t}</span>
+          ))}
+        </div>
+        <div className={`max-w-[75%] rounded-2xl rounded-bl-sm px-4 py-3 text-sm ${dark ? "bg-white/[0.08]" : "bg-brand-ink/[0.04]"}`}>
+          What's your return policy?
+        </div>
+        <div className="max-w-[80%] self-end rounded-2xl rounded-br-sm px-4 py-3 text-sm bg-gradient-to-br from-[#9132FB] to-[#0C87FD] text-white">
+          Happy to help! Returns are free within 30 days — I can start one for you now.
         </div>
       </div>
-    </motion.div>
+    );
+  }
+
+  if (kind === "sync") {
+    return (
+      <div className={`relative w-full h-full rounded-2xl border p-5 ${surface} flex items-center justify-center`}>
+        <div className="relative w-full h-full flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#9132FB] to-[#0C87FD] flex items-center justify-center text-white shadow-lg z-10">
+            <Cloud className="w-7 h-7" />
+          </div>
+          {[
+            { label: "Drive", angle: -140 },
+            { label: "OneDrive", angle: -40 },
+            { label: "Notion", angle: 90 },
+          ].map((n, i) => {
+            const rad = (n.angle * Math.PI) / 180;
+            const r = 110;
+            const dx = Math.cos(rad) * r;
+            const dy = Math.sin(rad) * r;
+            return (
+              <div key={n.label} className="absolute" style={{ transform: `translate(${dx}px, ${dy}px)` }}>
+                <div className={`px-3 py-2 rounded-xl text-xs font-semibold ${dark ? "bg-white/10 text-white" : "bg-white text-brand-ink shadow-md"} border ${dark ? "border-white/10" : "border-black/5"}`}>
+                  {n.label}
+                </div>
+              </div>
+            );
+          })}
+          <svg className="absolute inset-0 w-full h-full" viewBox="-160 -120 320 240" fill="none">
+            {[-140, -40, 90].map((a, i) => {
+              const rad = (a * Math.PI) / 180;
+              const r = 90;
+              return (
+                <motion.line
+                  key={i}
+                  x1="0" y1="0"
+                  x2={Math.cos(rad) * r} y2={Math.sin(rad) * r}
+                  stroke="url(#syncG)" strokeWidth="1.5" strokeDasharray="4 4"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 + i * 0.15, duration: 0.8 }}
+                />
+              );
+            })}
+            <defs>
+              <linearGradient id="syncG" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#9132FB" />
+                <stop offset="100%" stopColor="#0C87FD" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "brand") {
+    return (
+      <div className={`relative w-full h-full rounded-2xl border p-5 ${surface} grid grid-cols-2 gap-3`}>
+        <div className="flex flex-col gap-2">
+          <div className={`text-[11px] font-semibold uppercase tracking-wider ${subtext}`}>Theme</div>
+          <div className="flex gap-2">
+            {["#9132FB", "#0C87FD", "#01013A", "#F3EEE3"].map((c) => (
+              <div key={c} className="w-8 h-8 rounded-full ring-2 ring-white shadow" style={{ background: c }} />
+            ))}
+          </div>
+          <div className={`mt-3 text-[11px] font-semibold uppercase tracking-wider ${subtext}`}>Radius</div>
+          <div className="flex gap-2">
+            {[8, 14, 22].map((r) => (
+              <div key={r} className={`w-8 h-8 border-2 ${dark ? "border-white/40" : "border-brand-ink/30"}`} style={{ borderRadius: r }} />
+            ))}
+          </div>
+        </div>
+        <div className="relative rounded-xl bg-gradient-to-br from-[#9132FB] to-[#0C87FD] p-3 flex flex-col justify-end">
+          <div className="rounded-lg bg-white/95 p-3 text-brand-ink text-xs shadow-lg">
+            <div className="font-semibold">ChatOne</div>
+            <div className="opacity-60 text-[10px]">How can I help?</div>
+          </div>
+          <div className="mt-2 self-end w-10 h-10 rounded-full bg-white/95 shadow-lg flex items-center justify-center">
+            <MessageSquare className="w-4 h-4 text-[#9132FB]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "embed") {
+    return (
+      <div className={`relative w-full h-full rounded-2xl border ${surface} overflow-hidden font-mono text-[13px]`}>
+        <div className={`flex items-center gap-1.5 px-4 py-2.5 border-b ${dark ? "border-white/10" : "border-black/5"}`}>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
+          <span className={`ml-3 text-[11px] ${subtext} font-sans`}>index.html</span>
+        </div>
+        <pre className="p-4 leading-relaxed overflow-hidden">
+<span className={subtext}>{"<!-- Paste before </body> -->"}</span>{"\n"}
+<span className={dark ? "text-[#A8CBFF]" : "text-[#0C87FD]"}>{"<script"}</span>{" "}
+<span className={dark ? "text-[#C9B8FF]" : "text-[#9132FB]"}>{"src"}</span>=
+<span className={dark ? "text-[#FFD98A]" : "text-[#B8860B]"}>{'"chatone.io/w.js"'}</span>{"\n        "}
+<span className={dark ? "text-[#C9B8FF]" : "text-[#9132FB]"}>{"data-id"}</span>=
+<span className={dark ? "text-[#FFD98A]" : "text-[#B8860B]"}>{'"co_9K2H"'}</span>{"\n        "}
+<span className={dark ? "text-[#C9B8FF]" : "text-[#9132FB]"}>{"defer"}</span>
+<span className={dark ? "text-[#A8CBFF]" : "text-[#0C87FD]"}>{"></script>"}</span>
+        </pre>
+        <div className={`absolute bottom-3 right-3 flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full ${dark ? "bg-white/10 text-white" : "bg-brand-ink/[0.06]"}`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
+        </div>
+      </div>
+    );
+  }
+
+  // analytics
+  const bars = [40, 62, 48, 78, 55, 88, 72];
+  return (
+    <div className={`relative w-full h-full rounded-2xl border p-5 ${surface}`}>
+      <div className="flex items-baseline justify-between">
+        <div>
+          <div className={`text-[11px] font-semibold uppercase tracking-wider ${subtext}`}>Conversations</div>
+          <div className="mt-1 text-3xl font-bold">12,847</div>
+        </div>
+        <div className={`text-[11px] font-semibold px-2 py-1 rounded-full ${dark ? "bg-emerald-400/20 text-emerald-300" : "bg-emerald-50 text-emerald-700"}`}>+24.3%</div>
+      </div>
+      <div className="mt-6 h-24 flex items-end gap-2">
+        {bars.map((h, i) => (
+          <motion.div
+            key={i}
+            initial={{ height: 0 }}
+            whileInView={{ height: `${h}%` }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 + i * 0.06, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 rounded-t-md bg-gradient-to-t from-[#9132FB] to-[#0C87FD]"
+          />
+        ))}
+      </div>
+      <div className={`mt-3 flex justify-between text-[10px] ${subtext}`}>
+        {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d => <span key={d}>{d}</span>)}
+      </div>
+    </div>
   );
 }
 
