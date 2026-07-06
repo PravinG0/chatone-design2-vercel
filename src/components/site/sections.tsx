@@ -1168,55 +1168,346 @@ function StepVisual({ kind }: { kind: Step["visual"] }) {
 }
 
 /* ---------------- Use Cases ---------------- */
+type UseCase = {
+  icon: typeof Headphones;
+  t: string;
+  d: string;
+  link: string;
+  stat: string;
+  accent: { from: string; to: string; ink: string; chip: string };
+  tags: string[];
+};
+
+const USE_CASES: UseCase[] = [
+  {
+    icon: Headphones,
+    t: "AI Customer Support",
+    d: "Cut ticket volume by up to 60%. Your AI handles common questions instantly, so your team focuses on conversations that matter.",
+    link: "customer support",
+    stat: "60% fewer tickets",
+    accent: { from: "#6C4BFF", to: "#3B82F6", ink: "#1B0D6B", chip: "#EDE7FF" },
+    tags: ["Live chat", "Ticket triage", "Handoff"],
+  },
+  {
+    icon: ShoppingBag,
+    t: "E-commerce & Shopify",
+    d: "Turn browsers into buyers. Answer product questions, recommend items, and handle checkout queries — reducing cart abandonment.",
+    link: "e-commerce",
+    stat: "3× conversions",
+    accent: { from: "#F59E0B", to: "#EF4444", ink: "#4A1A0B", chip: "#FFECD9" },
+    tags: ["Product Q&A", "Recommendations", "Checkout"],
+  },
+  {
+    icon: Rocket,
+    t: "SaaS Platform Support",
+    d: "Let your AI handle onboarding, feature explanations, and troubleshooting using your product docs and knowledge base.",
+    link: "SaaS use case",
+    stat: "2× activation",
+    accent: { from: "#10B981", to: "#0EA5E9", ink: "#053B32", chip: "#D8F7EA" },
+    tags: ["Onboarding", "Feature help", "Troubleshoot"],
+  },
+  {
+    icon: FileText,
+    t: "Documentation Sites",
+    d: "Add a conversational layer to your docs so visitors ask questions in plain language instead of hunting through pages.",
+    link: "docs use case",
+    stat: "Instant answers",
+    accent: { from: "#8B5CF6", to: "#EC4899", ink: "#3A0B4A", chip: "#F6E4FF" },
+    tags: ["Semantic search", "Citations", "Ask anything"],
+  },
+];
+
 export function UseCases() {
-  const uses = [
-    { icon: Headphones, t: "AI Customer Support", d: "Cut ticket volume by up to 60%. Your AI handles common questions instantly, so your team focuses on conversations that matter.", link: "customer support", stat: "60% fewer tickets" },
-    { icon: ShoppingBag, t: "E-commerce & Shopify", d: "Turn browsers into buyers. Answer product questions, recommend items, and handle checkout queries — reducing cart abandonment.", link: "e-commerce", stat: "3× conversions" },
-    { icon: Rocket, t: "SaaS Platform Support", d: "Let your AI handle onboarding, feature explanations, and troubleshooting using your product docs and knowledge base.", link: "SaaS use case", stat: "2× activation" },
-    { icon: FileText, t: "Documentation Sites", d: "Add a conversational layer to your docs so visitors ask questions in plain language instead of hunting through pages.", link: "docs use case", stat: "Instant answers" },
-  ];
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
+  const [active, setActive] = useState(0);
+  const total = USE_CASES.length;
+
+  useEffect(() => {
+    return scrollYProgress.on("change", (v) => {
+      const t = Math.min(0.9999, Math.max(0, (v - 0.04) / 0.92));
+      setActive(Math.min(total - 1, Math.floor(t * total)));
+    });
+  }, [scrollYProgress, total]);
+
+  const barProgress = useTransform(scrollYProgress, [0.04, 0.96], ["0%", "100%"]);
+
   return (
-    <section className="relative py-28 md:py-36 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center">
-          <SectionHeading
-            center
-            eyebrow="Use cases"
-            title="Built for every type of"
-            highlight="business"
-            desc="From Shopify stores to SaaS platforms — a use case built for you."
-          />
+    <section id="use-cases" ref={wrapRef} className="relative" style={{ height: `${100 + total * 90}vh` }}>
+      <div className="sticky top-0 h-screen overflow-hidden bg-white">
+        {/* Ambient background that shifts per active case */}
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={`bg-${active}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0 pointer-events-none"
+          >
+            <div
+              className="absolute -top-40 -left-40 w-[680px] h-[680px] rounded-full blur-3xl opacity-40"
+              style={{ background: `radial-gradient(circle, ${USE_CASES[active].accent.from} 0%, transparent 60%)` }}
+            />
+            <div
+              className="absolute -bottom-40 -right-40 w-[680px] h-[680px] rounded-full blur-3xl opacity-35"
+              style={{ background: `radial-gradient(circle, ${USE_CASES[active].accent.to} 0%, transparent 60%)` }}
+            />
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none" />
+
+        {/* Header row */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 pt-14 md:pt-16 flex items-end justify-between gap-6">
+          <div>
+            <div className="eyebrow">Use cases</div>
+            <h2 className="mt-3 font-display text-3xl md:text-5xl leading-[1.05] tracking-tight text-brand-ink max-w-2xl">
+              Built for every type of <span className="text-gradient-brand italic">business</span>
+            </h2>
+          </div>
+          <div className="hidden md:block font-mono text-xs tracking-[0.2em] text-brand-ink/50">
+            {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          </div>
         </div>
-        <div className="mt-16 grid md:grid-cols-2 gap-5">
-          {uses.map((u, i) => (
-            <Reveal key={u.t} delay={i * 0.06}>
-              <TiltCard intensity={5} className="h-full">
+
+        {/* Main immersive panel */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 mt-8 md:mt-10 h-[calc(100vh-260px)] md:h-[calc(100vh-240px)]">
+          <div className="relative w-full h-full grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center">
+            {/* Left: text story */}
+            <div className="md:col-span-6 relative">
+              <AnimatePresence mode="wait">
                 <motion.div
-                  whileHover={{ y: -6 }}
-                  transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                  className="relative rounded-3xl p-8 md:p-10 h-full bg-white border border-black/[0.05] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_15px_40px_-25px_rgba(15,23,42,0.15)] hover:border-[#6C4BFF]/25 hover:shadow-[0_30px_70px_-30px_rgba(108,75,255,0.3)] transition-all group overflow-hidden"
+                  key={`text-${active}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="pointer-events-none absolute -top-24 -right-24 w-64 h-64 rounded-full bg-gradient-to-br from-indigo-100/70 to-blue-100/50 blur-3xl opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all duration-700" />
-                  <div className="relative">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="w-14 h-14 rounded-2xl bg-brand-gradient text-white flex items-center justify-center shadow-lg shadow-[#6C4BFF]/30 group-hover:rotate-6 transition-transform duration-500 shrink-0">
-                        <u.icon className="w-6 h-6" />
-                      </div>
-                      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-[#4c39c9] border border-indigo-100 whitespace-nowrap">{u.stat}</span>
-                    </div>
-                    <h3 className="mt-6 text-2xl font-semibold text-brand-ink tracking-tight">{u.t}</h3>
-                    <p className="mt-3 text-[15px] text-foreground/60 leading-relaxed">{u.d}</p>
-                    <a href="#" className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C4BFF] group-hover:gap-2.5 transition-all">
-                      Explore {u.link} <ArrowRight className="w-4 h-4" />
-                    </a>
+                  <div
+                    className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide"
+                    style={{ background: USE_CASES[active].accent.chip, color: USE_CASES[active].accent.ink }}
+                  >
+                    <span
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ background: `linear-gradient(135deg, ${USE_CASES[active].accent.from}, ${USE_CASES[active].accent.to})` }}
+                    />
+                    {USE_CASES[active].stat}
                   </div>
+                  <h3 className="mt-5 font-display text-[44px] md:text-[76px] leading-[0.98] tracking-tight text-brand-ink">
+                    {USE_CASES[active].t.split(" ").map((w, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, y: 24 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.55, delay: 0.05 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                        className="inline-block mr-[0.25em]"
+                      >
+                        {w}
+                      </motion.span>
+                    ))}
+                  </h3>
+                  <motion.p
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.25 }}
+                    className="mt-6 text-[16px] md:text-lg text-brand-ink/70 leading-relaxed max-w-xl"
+                  >
+                    {USE_CASES[active].d}
+                  </motion.p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.35 }}
+                    className="mt-6 flex flex-wrap gap-2"
+                  >
+                    {USE_CASES[active].tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/80 backdrop-blur border border-black/[0.06] text-brand-ink/75"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </motion.div>
+                  <motion.a
+                    href="#"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                    className="mt-8 inline-flex items-center gap-2 text-sm font-semibold group"
+                    style={{ color: USE_CASES[active].accent.ink }}
+                  >
+                    Explore {USE_CASES[active].link}
+                    <span
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white transition-transform group-hover:translate-x-1"
+                      style={{ background: `linear-gradient(135deg, ${USE_CASES[active].accent.from}, ${USE_CASES[active].accent.to})` }}
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </motion.a>
                 </motion.div>
-              </TiltCard>
-            </Reveal>
-          ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Right: visual card */}
+            <div className="md:col-span-6 relative h-[46vh] md:h-full flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`visual-${active}`}
+                  initial={{ opacity: 0, scale: 0.9, rotate: -3, y: 40 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, rotate: 3, y: -30 }}
+                  transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative w-full max-w-[560px] aspect-[4/5]"
+                >
+                  <UseCaseVisual uc={USE_CASES[active]} />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Parallax floating chips */}
+              <motion.div
+                aria-hidden
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-8 right-4 md:right-0 hidden sm:block"
+              >
+                <div className="rounded-2xl bg-white/90 backdrop-blur-xl border border-black/[0.06] shadow-lg px-4 py-2.5 text-xs font-semibold text-brand-ink">
+                  {USE_CASES[active].stat}
+                </div>
+              </motion.div>
+              <motion.div
+                aria-hidden
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-6 left-2 md:left-6 hidden sm:block"
+              >
+                <div
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-xl"
+                  style={{ background: `linear-gradient(135deg, ${USE_CASES[active].accent.from}, ${USE_CASES[active].accent.to})` }}
+                >
+                  {(() => {
+                    const Icon = USE_CASES[active].icon;
+                    return <Icon className="w-5 h-5" />;
+                  })()}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom: index rail + progress */}
+        <div className="absolute left-0 right-0 bottom-0 z-10 border-t border-black/[0.06] bg-white/70 backdrop-blur-xl">
+          <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-4 flex items-center gap-6 overflow-x-auto">
+            {USE_CASES.map((u, i) => (
+              <button
+                key={u.t}
+                onClick={() => {
+                  const el = wrapRef.current;
+                  if (!el) return;
+                  const target = el.offsetTop + ((i + 0.5) / total) * (el.offsetHeight - window.innerHeight);
+                  window.scrollTo({ top: target, behavior: "smooth" });
+                }}
+                className="group flex items-center gap-3 whitespace-nowrap"
+              >
+                <span
+                  className={`font-mono text-[11px] tracking-widest transition-colors ${
+                    i === active ? "text-brand-ink" : "text-brand-ink/35"
+                  }`}
+                >
+                  0{i + 1}
+                </span>
+                <span
+                  className={`text-sm font-medium transition-colors ${
+                    i === active ? "text-brand-ink" : "text-brand-ink/45 group-hover:text-brand-ink/70"
+                  }`}
+                >
+                  {u.t}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="h-[2px] bg-black/[0.05]">
+            <motion.div className="h-full bg-brand-gradient" style={{ width: barProgress }} />
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function UseCaseVisual({ uc }: { uc: UseCase }) {
+  const Icon = uc.icon;
+  return (
+    <div
+      className="relative w-full h-full rounded-[36px] overflow-hidden shadow-[0_40px_90px_-40px_rgba(15,10,60,0.35)]"
+      style={{
+        background: `linear-gradient(135deg, ${uc.accent.from} 0%, ${uc.accent.to} 100%)`,
+      }}
+    >
+      <div className="absolute inset-0 noise mix-blend-overlay" />
+      <div aria-hidden className="absolute inset-0">
+        <div className="absolute inset-0 opacity-30" style={{
+          backgroundImage: "radial-gradient(circle at 20% 15%, rgba(255,255,255,0.5), transparent 45%), radial-gradient(circle at 85% 85%, rgba(255,255,255,0.35), transparent 45%)",
+        }} />
+      </div>
+
+      {/* Large ghost icon */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+        animate={{ opacity: 0.15, scale: 1, rotate: 0 }}
+        transition={{ duration: 0.9, delay: 0.1 }}
+        className="absolute -right-10 -bottom-10 text-white"
+      >
+        <Icon className="w-[340px] h-[340px]" strokeWidth={1} />
+      </motion.div>
+
+      {/* Foreground preview card */}
+      <div className="absolute inset-6 md:inset-8 rounded-3xl bg-white/12 backdrop-blur-xl border border-white/25 p-5 md:p-6 flex flex-col text-white shadow-2xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-white/25 flex items-center justify-center">
+              <Icon className="w-4.5 h-4.5" />
+            </div>
+            <div>
+              <div className="text-[10px] font-mono tracking-widest text-white/70">USE CASE</div>
+              <div className="text-sm font-semibold leading-tight">{uc.t}</div>
+            </div>
+          </div>
+          <div className="text-[10px] font-mono text-white/70">LIVE</div>
+        </div>
+
+        <div className="mt-5 space-y-2.5">
+          {[
+            { who: "user", text: "How do I get started?" },
+            { who: "bot", text: "Happy to help — here's the fastest path…" },
+            { who: "user", text: "Can it use my docs?" },
+            { who: "bot", text: "Yes — just connect a source and we sync instantly." },
+          ].map((m, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: m.who === "user" ? 20 : -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 + i * 0.12 }}
+              className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px] leading-snug ${
+                m.who === "user"
+                  ? "ml-auto bg-white text-brand-ink"
+                  : "bg-white/20 text-white border border-white/25"
+              }`}
+            >
+              {m.text}
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-auto pt-4 flex items-center justify-between border-t border-white/15">
+          <div className="text-[11px] text-white/70">Powered by ChatOne</div>
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+            {uc.stat}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
