@@ -914,46 +914,70 @@ export function HowItWorks() {
               <div className="absolute left-6 right-6 top-[14%] h-px bg-white/8" />
             </div>
 
-            {/* Left: stacked visuals, crossfade based on active */}
-            <div className="absolute inset-y-0 left-0 w-full md:w-[62%] flex items-center justify-center px-6 md:px-12">
-              <div className="relative w-full max-w-[520px] aspect-[5/6]">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={HIW_STEPS[active].visual}
-                    initial={{ opacity: 0, y: 24, scale: 0.96, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: -24, scale: 0.98, filter: "blur(6px)" }}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0"
-                  >
-                    <StepVisual kind={HIW_STEPS[active].visual} />
-                  </motion.div>
-                </AnimatePresence>
+            {/* Content grid: visual + text */}
+            <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 p-6 md:p-10">
+              {/* Left: stacked visuals, crossfade based on active */}
+              <div className="md:col-span-7 relative flex items-center justify-center">
+                <div className="relative w-full max-w-[520px] h-[42vh] md:h-auto md:aspect-[5/6]">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={HIW_STEPS[active].visual}
+                      initial={{ opacity: 0, y: 24, scale: 0.96, filter: "blur(8px)" }}
+                      animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, y: -24, scale: 0.98, filter: "blur(6px)" }}
+                      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute inset-0"
+                    >
+                      <StepVisual kind={HIW_STEPS[active].visual} />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              {/* Right: text panel */}
+              <div className="md:col-span-5 relative flex items-center">
+                <div className="w-full max-w-md">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={HIW_STEPS[active].code}
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <div className="text-xs font-mono tracking-widest text-white/60">{HIW_STEPS[active].code}</div>
+                      <h3 className="mt-3 font-display text-3xl md:text-[40px] leading-[1.05] tracking-tight text-white">
+                        {HIW_STEPS[active].title}
+                      </h3>
+                      <p className="mt-4 text-[15px] md:text-base leading-relaxed text-white/75 max-w-sm">
+                        {HIW_STEPS[active].desc}
+                      </p>
+                      <div className="mt-6 flex flex-wrap gap-2">
+                        {HIW_STEPS.map((s, i) => (
+                          <button
+                            key={s.code}
+                            onClick={() => {
+                              const el = wrapRef.current;
+                              if (!el) return;
+                              const target = el.offsetTop + ((i + 0.5) / segments) * (el.offsetHeight - window.innerHeight);
+                              window.scrollTo({ top: target, behavior: "smooth" });
+                            }}
+                            className={`text-[10px] font-mono tracking-widest px-2.5 py-1 rounded-full border transition-colors ${
+                              i === active
+                                ? "bg-white text-brand-ink border-white"
+                                : "text-white/60 border-white/20 hover:text-white hover:border-white/40"
+                            }`}
+                          >
+                            {s.code.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
 
-            {/* Right: sticky text panel */}
-            <div className="absolute inset-y-0 right-0 w-full md:w-[38%] flex items-center px-6 md:px-12 pointer-events-none">
-              <div className="w-full max-w-md">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={HIW_STEPS[active].code}
-                    initial={{ opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <div className="text-xs font-mono tracking-widest text-white/60">{HIW_STEPS[active].code}</div>
-                    <h3 className="mt-3 font-display text-3xl md:text-[40px] leading-[1.05] tracking-tight text-white">
-                      {HIW_STEPS[active].title}
-                    </h3>
-                    <p className="mt-4 text-[15px] md:text-base leading-relaxed text-white/75 max-w-sm">
-                      {HIW_STEPS[active].desc}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
 
             {/* Right edge: dot progress */}
             <div className="absolute right-5 md:right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3">
