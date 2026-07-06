@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import logo from "@/assets/chatone-horizontal.png.asset.json";
 import icon from "@/assets/chatone-icon.png.asset.json";
 import {
@@ -345,13 +345,14 @@ export function Marquee() {
 }
 
 /* ---------------- Reveal helper ---------------- */
-export function Reveal({ children, delay = 0, y = 24 }: { children: ReactNode; delay?: number; y?: number }) {
+export function Reveal({ children, delay = 0, y = 24, className = "" }: { children: ReactNode; delay?: number; y?: number; className?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: false, margin: "-12% 0px -12% 0px" }}
       transition={{ duration: 0.7, delay, ease: [0.2, 0.7, 0.2, 1] }}
+      className={className}
     >{children}</motion.div>
   );
 }
@@ -444,9 +445,9 @@ export function WhyChatOne() {
           />
         </div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-5 auto-rows-[minmax(180px,auto)]">
-          <Reveal>
-            <TiltCard className="md:col-span-3 rounded-3xl p-8 md:p-10 h-full bg-white border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_60px_-30px_rgba(108,75,255,0.25)] overflow-hidden relative group">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(180px,auto)] items-stretch">
+          <Reveal className="md:col-span-1 lg:col-span-6">
+            <TiltCard className="rounded-3xl p-8 md:p-10 min-h-[260px] h-full bg-white border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_60px_-30px_rgba(108,75,255,0.25)] overflow-hidden relative group">
               <div className="pointer-events-none absolute -top-20 -right-20 w-72 h-72 rounded-full bg-[#6C4BFF]/15 blur-3xl group-hover:scale-125 transition-transform duration-700" />
               <div className="relative">
                 <div className="eyebrow"><TrendingUp className="w-3.5 h-3.5" /> Support impact</div>
@@ -459,8 +460,8 @@ export function WhyChatOne() {
             </TiltCard>
           </Reveal>
 
-          <Reveal delay={0.1}>
-            <div className="md:col-span-3 grid grid-cols-2 gap-4 md:gap-5 h-full">
+          <Reveal delay={0.1} className="md:col-span-1 lg:col-span-6">
+            <div className="grid grid-cols-2 gap-4 md:gap-5 min-h-[260px] h-full">
               <TiltCard className="rounded-3xl p-6 h-full bg-gradient-to-br from-[#6C4BFF] to-[#3B82F6] text-white shadow-[0_20px_60px_-25px_rgba(108,75,255,0.6)] overflow-hidden relative flex flex-col justify-between">
                 <Rocket className="w-6 h-6 opacity-80" />
                 <div>
@@ -479,11 +480,11 @@ export function WhyChatOne() {
           </Reveal>
 
           {bullets.map((b, i) => (
-            <Reveal key={b.t} delay={0.15 + i * 0.05}>
+            <Reveal key={b.t} delay={0.15 + i * 0.05} className="md:col-span-1 lg:col-span-3">
               <motion.div
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className="rounded-2xl p-6 h-full bg-white/70 backdrop-blur-xl border border-black/[0.06] hover:border-[#6C4BFF]/25 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_15px_40px_-20px_rgba(108,75,255,0.25)] transition-all flex items-start gap-4"
+                className="rounded-2xl p-6 min-h-[180px] h-full bg-white/70 backdrop-blur-xl border border-black/[0.06] hover:border-[#6C4BFF]/25 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_15px_40px_-20px_rgba(108,75,255,0.25)] transition-all flex items-start gap-4"
               >
                 <div className="w-11 h-11 shrink-0 rounded-xl bg-indigo-50 border border-indigo-100 text-[#6C4BFF] flex items-center justify-center">
                   <b.icon className="w-5 h-5" />
@@ -526,33 +527,49 @@ const FEATURE_ITEMS: FeatureItem[] = [
 
 export function Features() {
   const wrapRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
 
   // Compute translate distance based on rendered widths at runtime
   const [distance, setDistance] = useState(0);
-  useEffect(() => {
+  useLayoutEffect(() => {
+    let frame = 0;
     const measure = () => {
-      if (!trackRef.current) return;
+      if (!trackRef.current || !viewportRef.current) return;
       const total = trackRef.current.scrollWidth;
-      const view = trackRef.current.clientWidth;
+      const view = viewportRef.current.clientWidth;
       setDistance(Math.max(0, total - view));
     };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    const scheduleMeasure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    };
+    scheduleMeasure();
+
+    const ro = new ResizeObserver(scheduleMeasure);
+    if (trackRef.current) ro.observe(trackRef.current);
+    if (viewportRef.current) ro.observe(viewportRef.current);
+    window.addEventListener("resize", scheduleMeasure);
+    window.addEventListener("load", scheduleMeasure);
+    return () => {
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+      window.removeEventListener("resize", scheduleMeasure);
+      window.removeEventListener("load", scheduleMeasure);
+    };
   }, []);
 
-  const x = useTransform(scrollYProgress, [0.05, 0.95], [0, -distance]);
-  const xSpring = useSpring(x, { stiffness: 120, damping: 26, mass: 0.4 });
-  const progressWidth = useTransform(scrollYProgress, [0.05, 0.95], ["0%", "100%"]);
+  const x = useTransform(scrollYProgress, [0.08, 0.92], [0, -distance], { clamp: true });
+  const xSpring = useSpring(x, { stiffness: 150, damping: 32, mass: 0.35 });
+  const progressWidth = useTransform(scrollYProgress, [0.08, 0.92], ["0%", "100%"], { clamp: true });
 
   return (
     <section
       id="features"
       ref={wrapRef}
       className="relative"
-      style={{ height: `${100 + FEATURE_ITEMS.length * 55}vh` }}
+      style={{ height: `${140 + FEATURE_ITEMS.length * 60}vh` }}
     >
       <div className="sticky top-0 h-screen flex flex-col overflow-hidden bg-gradient-to-b from-white via-[#F6F4FF] to-white">
         {/* soft brand mesh */}
@@ -583,7 +600,7 @@ export function Features() {
         </div>
 
         {/* Horizontal track */}
-        <div className="relative z-10 flex-1 flex items-center mt-8 md:mt-12">
+        <div ref={viewportRef} className="relative z-10 flex-1 flex items-center mt-8 md:mt-12 overflow-visible">
           <motion.div
             ref={trackRef}
             style={{ x: xSpring }}
@@ -842,15 +859,14 @@ type Step = {
   code: string;
   title: string;
   desc: string;
-  visual: "upload" | "train" | "brand" | "embed" | "live";
+  visual: "upload" | "train" | "brand" | "embed";
 };
 
 const HIW_STEPS: Step[] = [
-  { code: "01a", title: "Drop in what you know", desc: "Upload PDFs, DOCX, or paste a URL. ChatOne ingests, chunks, and indexes your knowledge in seconds.", visual: "upload" },
-  { code: "01b", title: "Shape its personality", desc: "Set the tone, guardrails, and system prompt. Your assistant sounds unmistakably like your brand.", visual: "train" },
-  { code: "01c", title: "Dress it in your brand", desc: "Logo, colors, radius, position — every pixel tunable so the widget feels native to your site.", visual: "brand" },
-  { code: "01d", title: "One line. Anywhere.", desc: "Paste a single script tag into WordPress, Shopify, React, or plain HTML — you're wired up in a minute.", visual: "embed" },
-  { code: "01e", title: "Answer 24/7. Improve daily.", desc: "Live conversations, gap detection, and continuous learning — your assistant gets sharper with every chat.", visual: "live" },
+  { code: "01", title: "Create your bot", desc: "Name your bot, choose its tone — friendly, professional, or technical — and write a system prompt that captures your brand voice.", visual: "train" },
+  { code: "02", title: "Upload your knowledge", desc: "Add PDFs, DOCX files, or paste any website URL. ChatOne reads your content and builds a smart knowledge base automatically.", visual: "upload" },
+  { code: "03", title: "Customize the look", desc: "Upload your logo, choose brand colors, and write a welcome message. It should feel like a natural part of your site.", visual: "brand" },
+  { code: "04", title: "Embed and go live", desc: "Copy one line of code. Paste it into your website. Your AI assistant is live and answering visitors 24/7.", visual: "embed" },
 ];
 
 export function HowItWorks() {
@@ -863,36 +879,35 @@ export function HowItWorks() {
   useEffect(() => {
     return scrollYProgress.on("change", (v) => {
       // Bias so the first & last steps have a moment to breathe
-      const t = Math.min(0.9999, Math.max(0, (v - 0.03) / 0.94));
+      const t = Math.min(0.9999, Math.max(0, (v - 0.06) / 0.88));
       const idx = Math.min(segments - 1, Math.floor(t * segments));
       setActive(idx);
     });
   }, [scrollYProgress, segments]);
 
-  const barProgress = useTransform(scrollYProgress, [0.03, 0.97], ["0%", "100%"]);
+  const barProgress = useTransform(scrollYProgress, [0.06, 0.94], ["0%", "100%"], { clamp: true });
 
   return (
-    <section id="how-it-works" ref={wrapRef} className="relative" style={{ height: `${100 + segments * 60}vh` }}>
+    <section id="how-it-works" ref={wrapRef} className="relative" style={{ height: `${130 + segments * 70}vh` }}>
       <div className="sticky top-0 h-screen flex flex-col overflow-hidden bg-white">
-        {/* Header: Problem / Solution */}
-        <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-16 md:pt-20 grid md:grid-cols-2 gap-8 md:gap-16">
+        {/* Header */}
+        <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-20 md:pt-24 grid md:grid-cols-2 gap-6 md:gap-16">
           <div>
-            <div className="text-xs font-mono tracking-widest text-brand-ink/50">00 &nbsp; PROBLEM</div>
+            <div className="text-xs font-mono tracking-widest text-brand-ink/50">How it works</div>
             <p className="mt-3 text-brand-ink/70 text-[15px] md:text-base leading-relaxed max-w-sm">
-              Teams either duct-tape generic chatbots or spend weeks wiring up custom AI — both approaches leak brand, break on updates, and frustrate visitors.
+              A four-step flow designed to feel effortless — no engineers required.
             </p>
           </div>
           <div>
             <div className="text-xs font-mono tracking-widest text-brand-ink/50">01 &nbsp; SOLUTION</div>
             <h2 className="mt-3 font-display text-2xl md:text-4xl leading-[1.1] tracking-tight text-brand-ink">
-              An AI assistant that learns <span className="text-gradient-brand italic">your</span> product,
-              speaks <span className="text-gradient-brand italic">your</span> voice, and ships in minutes.
+              From zero to live chatbot in under 10 minutes
             </h2>
           </div>
         </div>
 
         {/* Brand panel */}
-        <div className="relative z-10 flex-1 mx-4 md:mx-8 mt-8 md:mt-10 mb-10 md:mb-12">
+        <div className="relative z-10 flex-1 mx-4 md:mx-8 mt-5 md:mt-6 mb-8 md:mb-10 min-h-0">
           <div
             className="relative w-full h-full rounded-[36px] overflow-hidden"
             style={{
@@ -915,10 +930,10 @@ export function HowItWorks() {
             </div>
 
             {/* Content grid: visual + text */}
-            <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 p-6 md:p-10">
+            <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 grid-rows-[minmax(0,230px)_auto] md:grid-rows-none gap-2 md:gap-8 p-5 md:p-10">
               {/* Left: stacked visuals, crossfade based on active */}
-              <div className="md:col-span-7 relative flex items-center justify-center">
-                <div className="relative w-full max-w-[520px] h-[42vh] md:h-auto md:aspect-[5/6]">
+              <div className="md:col-span-7 relative flex items-start md:items-center justify-center min-h-0">
+                <div className="relative w-full max-w-[520px] h-[230px] sm:h-[36vh] md:h-auto md:aspect-[5/6]">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={HIW_STEPS[active].visual}
@@ -926,7 +941,7 @@ export function HowItWorks() {
                       animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                       exit={{ opacity: 0, y: -24, scale: 0.98, filter: "blur(6px)" }}
                       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute inset-0"
+                      className="absolute inset-0 overflow-hidden"
                     >
                       <StepVisual kind={HIW_STEPS[active].visual} />
                     </motion.div>
@@ -935,7 +950,7 @@ export function HowItWorks() {
               </div>
 
               {/* Right: text panel */}
-              <div className="md:col-span-5 relative flex items-center">
+              <div className="md:col-span-5 relative flex items-center min-h-0">
                 <div className="w-full max-w-md">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -946,13 +961,13 @@ export function HowItWorks() {
                       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                     >
                       <div className="text-xs font-mono tracking-widest text-white/60">{HIW_STEPS[active].code}</div>
-                      <h3 className="mt-3 font-display text-3xl md:text-[40px] leading-[1.05] tracking-tight text-white">
+                      <h3 className="mt-2 md:mt-3 font-display text-2xl sm:text-3xl md:text-[40px] leading-[1.05] tracking-tight text-white">
                         {HIW_STEPS[active].title}
                       </h3>
-                      <p className="mt-4 text-[15px] md:text-base leading-relaxed text-white/75 max-w-sm">
+                      <p className="mt-3 md:mt-4 text-sm sm:text-[15px] md:text-base leading-relaxed text-white/75 max-w-sm">
                         {HIW_STEPS[active].desc}
                       </p>
-                      <div className="mt-6 flex flex-wrap gap-2">
+                      <div className="mt-4 md:mt-6 flex flex-wrap gap-2">
                         {HIW_STEPS.map((s, i) => (
                           <button
                             key={s.code}
@@ -1249,15 +1264,15 @@ export function UseCases() {
 
   useEffect(() => {
     return scrollYProgress.on("change", (v) => {
-      const t = Math.min(0.9999, Math.max(0, (v - 0.04) / 0.92));
+      const t = Math.min(0.9999, Math.max(0, (v - 0.06) / 0.88));
       setActive(Math.min(total - 1, Math.floor(t * total)));
     });
   }, [scrollYProgress, total]);
 
-  const barProgress = useTransform(scrollYProgress, [0.04, 0.96], ["0%", "100%"]);
+  const barProgress = useTransform(scrollYProgress, [0.06, 0.94], ["0%", "100%"], { clamp: true });
 
   return (
-    <section id="use-cases" ref={wrapRef} className="relative" style={{ height: `${100 + total * 90}vh` }}>
+    <section id="use-cases" ref={wrapRef} className="relative" style={{ height: `${130 + total * 75}vh` }}>
       <div className="sticky top-0 h-screen overflow-hidden bg-white">
         {/* Ambient background that shifts per active case */}
         <AnimatePresence mode="sync">
@@ -1282,7 +1297,7 @@ export function UseCases() {
         <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none" />
 
         {/* Header row */}
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 pt-14 md:pt-16 flex items-end justify-between gap-6">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 pt-12 md:pt-14 flex items-end justify-between gap-6">
           <div>
             <div className="eyebrow">Use cases</div>
             <h2 className="mt-3 font-display text-3xl md:text-5xl leading-[1.05] tracking-tight text-brand-ink max-w-2xl">
@@ -1295,11 +1310,11 @@ export function UseCases() {
         </div>
 
         {/* Main immersive panel */}
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 mt-8 md:mt-10 h-[calc(100vh-260px)] md:h-[calc(100vh-240px)]">
-          <div className="relative w-full h-full grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 mt-4 md:mt-5 h-[calc(100vh-220px)] md:h-[calc(100vh-210px)]">
+          <div className="relative w-full h-full grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-start">
             {/* Left: text story */}
             <div className="md:col-span-6 relative">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="sync">
                 <motion.div
                   key={`text-${active}`}
                   initial={{ opacity: 0, y: 30 }}
@@ -1374,8 +1389,8 @@ export function UseCases() {
             </div>
 
             {/* Right: visual card */}
-            <div className="md:col-span-6 relative h-[46vh] md:h-full flex items-center justify-center">
-              <AnimatePresence mode="wait">
+            <div className="md:col-span-6 relative h-[46vh] md:h-full flex items-start justify-center">
+              <AnimatePresence mode="sync">
                 <motion.div
                   key={`visual-${active}`}
                   initial={{ opacity: 0, scale: 0.9, rotate: -3, y: 40 }}
