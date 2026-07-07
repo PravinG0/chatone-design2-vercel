@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import logo from "@/assets/chatone-horizontal.png.asset.json";
 import icon from "@/assets/chatone-icon.png.asset.json";
 import {
@@ -533,7 +533,7 @@ export function Features() {
 
   // Compute translate distance based on rendered widths at runtime
   const [distance, setDistance] = useState(0);
-  useLayoutEffect(() => {
+  useEffect(() => {
     let frame = 0;
     const measure = () => {
       if (!trackRef.current || !viewportRef.current) return;
@@ -604,10 +604,10 @@ export function Features() {
           <motion.div
             ref={trackRef}
             style={{ x: xSpring }}
-            className="flex items-center gap-5 md:gap-6 lg:gap-7 pl-6 md:pl-10 pr-[20vw] will-change-transform"
+            className="flex items-center gap-5 md:gap-6 lg:gap-7 pl-[calc(50vw-210px)] md:pl-[calc(50vw-260px)] pr-[20vw] will-change-transform"
           >
             {FEATURE_ITEMS.map((f, i) => (
-              <FeatureCard key={f.title} item={f} index={i} />
+              <FeatureCard key={f.title} item={f} index={i} scrollYProgress={scrollYProgress} />
             ))}
           </motion.div>
         </div>
@@ -623,16 +623,57 @@ const VARIANT_STYLES: Record<FeatureItem["variant"], { bg: string; text: string;
   blue:   { bg: "bg-[#DCEBFF]", text: "text-[#031B4E]", sub: "text-[#031B4E]/70", chip: "bg-white/80 text-[#0C87FD] border-[#0C87FD]/20", ring: "ring-white/60" },
 };
 
-function FeatureCard({ item, index }: { item: FeatureItem; index: number }) {
+function FeatureCard({
+  item, index, scrollYProgress,
+}: {
+  item: FeatureItem;
+  index: number;
+  scrollYProgress: any;
+}) {
   const s = VARIANT_STYLES[item.variant];
   const Icn = item.icon;
+  const total = FEATURE_ITEMS.length;
+  const isLast = index === total - 1;
+
+  // Stack depth: front card (index 0) has depth 0, back cards have higher depth
+  const stackDepth = index; // 0 = front-most rendered card
+  const foldedScale   = 1 - stackDepth * 0.04;
+  const foldedRotateZ = stackDepth * 2.5;
+  const foldedPeek    = stackDepth * 14; // peek to the right from center
+
+  // Unfold animation over first 20% of scroll
+  const unfoldProgress = useTransform(scrollYProgress, [0, 0.2], [0, 1], { clamp: true });
+
+  // Card-specific negative margin to collapse all cards on top of each other
+  // At 0 (folded): each card pulls next cards over it with negative margin
+  // At 1 (spread): normal gap restored
+  const cardWidth = 420; // approximate card width
+  const normalGap = 28;  // gap-7 ≈ 28px
+  const negativeMargin = useTransform(
+    unfoldProgress,
+    [0, 1],
+    [-(cardWidth + normalGap), 0]
+  );
+
+  const scale   = useTransform(unfoldProgress, [0, 1], [foldedScale, 1]);
+  const rotateZ = useTransform(unfoldProgress, [0, 1], [foldedRotateZ, 0]);
+  const xPeek   = useTransform(unfoldProgress, [0, 1], [-foldedPeek, 0]);
+
   return (
     <motion.article
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 48 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-20%" }}
-      transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-15%" }}
+      transition={{ duration: 0.65, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -6 }}
+      style={{
+        scale,
+        rotateZ,
+        x: xPeek,
+        zIndex: total - index,
+        // Pull each card (except last) hard left so they stack at center
+        marginRight: isLast ? 0 : negativeMargin,
+      }}
       className={`relative shrink-0 w-[min(82vw,420px)] sm:w-[min(62vw,460px)] md:w-[min(44vw,520px)] lg:w-[min(33vw,560px)] xl:w-[min(30vw,580px)] h-[clamp(420px,50vh,560px)] md:h-[clamp(440px,52vh,580px)] rounded-[28px] md:rounded-[32px] overflow-hidden ${s.bg} ${s.text} shadow-[0_30px_80px_-40px_rgba(15,10,60,0.35)] ring-1 ${s.ring}`}
     >
       {/* Top: text */}
@@ -893,8 +934,8 @@ export function HowItWorks() {
         {/* Header */}
         <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-20 md:pt-24 grid md:grid-cols-2 gap-6 md:gap-16">
           <div>
-            <div className="text-xs font-mono tracking-widest text-brand-ink/50">How it works</div>
-            <p className="mt-3 text-brand-ink/70 text-[15px] md:text-base leading-relaxed max-w-sm">
+            <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />How it works</span>
+            <p className="mt-4 text-brand-ink/70 text-[15px] md:text-base leading-relaxed max-w-sm">
               A four-step flow designed to feel effortless — no engineers required.
             </p>
           </div>
@@ -930,10 +971,10 @@ export function HowItWorks() {
             </div>
 
             {/* Content grid: visual + text */}
-            <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 grid-rows-[minmax(0,230px)_auto] md:grid-rows-none gap-2 md:gap-8 p-5 md:p-10">
+            <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12 grid-rows-[minmax(0,55%)_1fr] md:grid-rows-none gap-2 md:gap-8 p-5 md:p-10">
               {/* Left: stacked visuals, crossfade based on active */}
-              <div className="md:col-span-7 relative flex items-start md:items-center justify-center min-h-0">
-                <div className="relative w-full max-w-[520px] h-[230px] sm:h-[36vh] md:h-auto md:aspect-[5/6]">
+              <div className="md:col-span-7 relative flex items-stretch min-h-0">
+                <div className="relative w-full h-full">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={HIW_STEPS[active].visual}
@@ -941,7 +982,7 @@ export function HowItWorks() {
                       animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                       exit={{ opacity: 0, y: -24, scale: 0.98, filter: "blur(6px)" }}
                       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute inset-0 overflow-hidden"
+                      className="absolute inset-0"
                     >
                       <StepVisual kind={HIW_STEPS[active].visual} />
                     </motion.div>
@@ -950,7 +991,7 @@ export function HowItWorks() {
               </div>
 
               {/* Right: text panel */}
-              <div className="md:col-span-5 relative flex items-center min-h-0">
+              <div className="md:col-span-5 relative flex items-center min-h-0 h-full">
                 <div className="w-full max-w-md">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -1261,11 +1302,17 @@ export function UseCases() {
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
   const [active, setActive] = useState(0);
   const total = USE_CASES.length;
+  const activeRef = useRef(0);
 
   useEffect(() => {
     return scrollYProgress.on("change", (v) => {
       const t = Math.min(0.9999, Math.max(0, (v - 0.06) / 0.88));
-      setActive(Math.min(total - 1, Math.floor(t * total)));
+      const next = Math.min(total - 1, Math.floor(t * total));
+      // Only trigger a React re-render when the index actually changes
+      if (next !== activeRef.current) {
+        activeRef.current = next;
+        setActive(next);
+      }
     });
   }, [scrollYProgress, total]);
 
@@ -1273,33 +1320,27 @@ export function UseCases() {
 
   return (
     <section id="use-cases" ref={wrapRef} className="relative" style={{ height: `${130 + total * 75}vh` }}>
-      <div className="sticky top-0 h-screen overflow-hidden bg-white">
-        {/* Ambient background that shifts per active case */}
-        <AnimatePresence mode="sync">
-          <motion.div
-            key={`bg-${active}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 pointer-events-none"
-          >
-            <div
-              className="absolute -top-40 -left-40 w-[680px] h-[680px] rounded-full blur-3xl opacity-40"
-              style={{ background: `radial-gradient(circle, ${USE_CASES[active].accent.from} 0%, transparent 60%)` }}
-            />
-            <div
-              className="absolute -bottom-40 -right-40 w-[680px] h-[680px] rounded-full blur-3xl opacity-35"
-              style={{ background: `radial-gradient(circle, ${USE_CASES[active].accent.to} 0%, transparent 60%)` }}
-            />
-          </motion.div>
-        </AnimatePresence>
+      {/* sticky sits below the nav bar (~102px: 36px banner + 66px nav) */}
+      <div className="sticky top-0 h-[calc(100vh)] overflow-hidden bg-white flex flex-col">
+        {/* Ambient background that shifts per active case — CSS transition avoids remount jank */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+        >
+          <div
+            className="absolute -top-40 -left-40 w-[680px] h-[680px] rounded-full blur-3xl opacity-40 transition-[background] duration-700 ease-out"
+            style={{ background: `radial-gradient(circle, ${USE_CASES[active].accent.from} 0%, transparent 60%)` }}
+          />
+          <div
+            className="absolute -bottom-40 -right-40 w-[680px] h-[680px] rounded-full blur-3xl opacity-35 transition-[background] duration-700 ease-out"
+            style={{ background: `radial-gradient(circle, ${USE_CASES[active].accent.to} 0%, transparent 60%)` }}
+          />
+        </div>
         <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none" />
 
-        {/* Header row */}
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 pt-12 md:pt-14 flex items-end justify-between gap-6">
+        {/* Header row — pt accounts for sticky nav (banner ~36px + nav ~66px) */}
+        <div className="relative z-10 max-w-[1400px] mx-auto w-full px-6 md:px-10 pt-[6.5rem] md:pt-[7rem] flex items-end justify-between gap-6 shrink-0">
           <div>
-            <div className="eyebrow">Use cases</div>
+            <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />Use cases</span>
             <h2 className="mt-3 font-display text-3xl md:text-5xl leading-[1.05] tracking-tight text-brand-ink max-w-2xl">
               Built for every type of <span className="text-gradient-brand italic">business</span>
             </h2>
@@ -1309,18 +1350,18 @@ export function UseCases() {
           </div>
         </div>
 
-        {/* Main immersive panel */}
-        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 mt-4 md:mt-5 h-[calc(100vh-220px)] md:h-[calc(100vh-210px)]">
-          <div className="relative w-full h-full grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-start">
+        {/* Main immersive panel — flex-1 fills remaining space above the bottom rail (62px) */}
+        <div className="relative z-10 max-w-[1400px] mx-auto w-full px-6 md:px-10 mt-4 md:mt-5 flex-1 min-h-0 pb-[62px]">
+          <div className="relative w-full h-full grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-stretch">
             {/* Left: text story */}
-            <div className="md:col-span-6 relative">
-              <AnimatePresence mode="sync">
+            <div className="md:col-span-6 relative overflow-y-auto">
+              <AnimatePresence mode="wait">
                 <motion.div
                   key={`text-${active}`}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div
                     className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide"
@@ -1389,21 +1430,22 @@ export function UseCases() {
             </div>
 
             {/* Right: visual card */}
-            <div className="md:col-span-6 relative h-[46vh] md:h-full flex items-start justify-center">
-              <AnimatePresence mode="sync">
+            <div className="md:col-span-6 relative h-full flex items-start justify-center">
+              <AnimatePresence mode="wait">
                 <motion.div
                   key={`visual-${active}`}
-                  initial={{ opacity: 0, scale: 0.9, rotate: -3, y: 40 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, rotate: 3, y: -30 }}
-                  transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative w-full max-w-[560px] aspect-[4/5]"
+                  initial={{ opacity: 0, scale: 0.93, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: -20 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative w-full max-w-[480px] h-full"
+                  style={{ willChange: "transform, opacity" }}
                 >
                   <UseCaseVisual uc={USE_CASES[active]} />
                 </motion.div>
               </AnimatePresence>
 
-              {/* Parallax floating chips */}
+              {/* Floating stat badge */}
               <motion.div
                 aria-hidden
                 animate={{ y: [0, -12, 0] }}
@@ -1414,6 +1456,8 @@ export function UseCases() {
                   {USE_CASES[active].stat}
                 </div>
               </motion.div>
+
+              {/* Icon badge bottom-left */}
               <motion.div
                 aria-hidden
                 animate={{ y: [0, 10, 0] }}
@@ -1424,10 +1468,7 @@ export function UseCases() {
                   className="w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-xl"
                   style={{ background: `linear-gradient(135deg, ${USE_CASES[active].accent.from}, ${USE_CASES[active].accent.to})` }}
                 >
-                  {(() => {
-                    const Icon = USE_CASES[active].icon;
-                    return <Icon className="w-5 h-5" />;
-                  })()}
+                  {(() => { const Icon = USE_CASES[active].icon; return <Icon className="w-5 h-5" />; })()}
                 </div>
               </motion.div>
             </div>
@@ -1448,18 +1489,10 @@ export function UseCases() {
                 }}
                 className="group flex items-center gap-3 whitespace-nowrap"
               >
-                <span
-                  className={`font-mono text-[11px] tracking-widest transition-colors ${
-                    i === active ? "text-brand-ink" : "text-brand-ink/35"
-                  }`}
-                >
+                <span className={`font-mono text-[11px] tracking-widest transition-colors ${i === active ? "text-brand-ink" : "text-brand-ink/35"}`}>
                   0{i + 1}
                 </span>
-                <span
-                  className={`text-sm font-medium transition-colors ${
-                    i === active ? "text-brand-ink" : "text-brand-ink/45 group-hover:text-brand-ink/70"
-                  }`}
-                >
+                <span className={`text-sm font-medium transition-colors ${i === active ? "text-brand-ink" : "text-brand-ink/45 group-hover:text-brand-ink/70"}`}>
                   {u.t}
                 </span>
               </button>
@@ -1474,14 +1507,14 @@ export function UseCases() {
   );
 }
 
+
+/* ---------------- Use Case Visual ---------------- */
 function UseCaseVisual({ uc }: { uc: UseCase }) {
   const Icon = uc.icon;
   return (
     <div
       className="relative w-full h-full rounded-[36px] overflow-hidden shadow-[0_40px_90px_-40px_rgba(15,10,60,0.35)]"
-      style={{
-        background: `linear-gradient(135deg, ${uc.accent.from} 0%, ${uc.accent.to} 100%)`,
-      }}
+      style={{ background: `linear-gradient(135deg, ${uc.accent.from} 0%, ${uc.accent.to} 100%)` }}
     >
       <div className="absolute inset-0 noise mix-blend-overlay" />
       <div aria-hidden className="absolute inset-0">
@@ -1489,8 +1522,6 @@ function UseCaseVisual({ uc }: { uc: UseCase }) {
           backgroundImage: "radial-gradient(circle at 20% 15%, rgba(255,255,255,0.5), transparent 45%), radial-gradient(circle at 85% 85%, rgba(255,255,255,0.35), transparent 45%)",
         }} />
       </div>
-
-      {/* Large ghost icon */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
         animate={{ opacity: 0.15, scale: 1, rotate: 0 }}
@@ -1499,13 +1530,11 @@ function UseCaseVisual({ uc }: { uc: UseCase }) {
       >
         <Icon className="w-[340px] h-[340px]" strokeWidth={1} />
       </motion.div>
-
-      {/* Foreground preview card */}
       <div className="absolute inset-6 md:inset-8 rounded-3xl bg-white/12 backdrop-blur-xl border border-white/25 p-5 md:p-6 flex flex-col text-white shadow-2xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-white/25 flex items-center justify-center">
-              <Icon className="w-4.5 h-4.5" />
+              <Icon className="w-4 h-4" />
             </div>
             <div>
               <div className="text-[10px] font-mono tracking-widest text-white/70">USE CASE</div>
@@ -1514,13 +1543,12 @@ function UseCaseVisual({ uc }: { uc: UseCase }) {
           </div>
           <div className="text-[10px] font-mono text-white/70">LIVE</div>
         </div>
-
-        <div className="mt-5 space-y-2.5">
+        <div className="mt-5 space-y-2.5 flex-1">
           {[
             { who: "user", text: "How do I get started?" },
-            { who: "bot", text: "Happy to help — here's the fastest path…" },
+            { who: "bot",  text: "Happy to help — here's the fastest path…" },
             { who: "user", text: "Can it use my docs?" },
-            { who: "bot", text: "Yes — just connect a source and we sync instantly." },
+            { who: "bot",  text: "Yes — just connect a source and we sync instantly." },
           ].map((m, i) => (
             <motion.div
               key={i}
@@ -1537,7 +1565,6 @@ function UseCaseVisual({ uc }: { uc: UseCase }) {
             </motion.div>
           ))}
         </div>
-
         <div className="mt-auto pt-4 flex items-center justify-between border-t border-white/15">
           <div className="text-[11px] text-white/70">Powered by ChatOne</div>
           <div className="flex items-center gap-1.5 text-[11px] font-semibold">
