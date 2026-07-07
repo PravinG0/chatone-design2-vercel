@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import logo from "@/assets/chatone-horizontal.png.asset.json";
-import icon from "@/assets/chatone-icon.png.asset.json";
+import logoSvg from "@/assets/Logo/SVG/ChatOne_Horizontal.svg";
+import iconSvg from "@/assets/Logo/SVG/ChatOne_only_Icon.svg";
 import {
   ArrowRight, Check, Sparkles, Cloud, Palette, Code2, BarChart3, BookOpen,
   Zap, Bot, MessageSquare, Globe, Layers, ShieldCheck, Plus, Minus,
@@ -34,7 +34,7 @@ export function Nav() {
       >
         <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3.5">
           <a href="#" className="flex items-center gap-2">
-            <img src={logo.url} alt="ChatOne" className="h-8 w-auto" />
+            <img src={logoSvg} alt="ChatOne" className="h-8 w-auto" />
           </a>
           <div className="hidden md:flex items-center gap-1">
             {links.map((l) => (
@@ -237,7 +237,7 @@ function ChatMockup() {
             </div>
             <div className="p-5 bg-gradient-to-b from-white to-indigo-50/40">
               <div className="flex items-center gap-3 pb-3 border-b border-black/5">
-                <img src={icon.url} alt="Aria" className="w-9 h-9 rounded-xl shadow-md" />
+                <img src={iconSvg} alt="Aria" className="w-9 h-9 rounded-xl shadow-md" />
                 <div>
                   <div className="text-sm font-semibold text-brand-ink">Aria · Support Bot</div>
                   <div className="text-[11px] text-emerald-600 flex items-center gap-1">
@@ -1936,7 +1936,7 @@ export function Footer() {
 
       <div className="relative max-w-7xl mx-auto grid md:grid-cols-6 gap-10">
         <div className="md:col-span-2">
-          <img src={logo.url} alt="ChatOne" className="h-8" />
+          <img src={logoSvg} alt="ChatOne" className="h-8" />
           <p className="mt-5 text-sm text-foreground/60 max-w-xs leading-relaxed">
             The AI chatbot for websites trusted by businesses worldwide. Build, train, and deploy in minutes.
           </p>
