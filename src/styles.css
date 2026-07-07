@@ -201,6 +201,28 @@
   to { background-position: 200% 0; }
 }
 
+@keyframes marquee-slow {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 @utility animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
 @utility animate-blob { animation: blob 18s ease-in-out infinite; }
 @utility animate-marquee { animation: marquee 40s linear infinite; }
+@utility animate-marquee-slow { animation: marquee-slow 28s linear infinite; }
+
+/* ── Hero side-panel ambient glows ───────────────────────────────────── */
+@utility hero-glow-left {
+  background: radial-gradient(ellipse 80% 60% at 80% 50%, rgba(108,75,255,0.09), transparent 70%);
+}
+@utility hero-glow-right {
+  background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(59,130,246,0.09), transparent 70%);
+}
+
+/* Particle travel keyframe used by connection path SVG particles */
+@keyframes particle-travel {
+  0%   { opacity: 0; offset-distance: 0%; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; offset-distance: 100%; }
+}

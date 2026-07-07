@@ -8,8 +8,43 @@ import {
   Twitter, Github, Linkedin, Youtube, Rocket, Upload, Wand2, Send,
   ShoppingBag, Headphones, FileText, TrendingUp,
 } from "lucide-react";
+import { HeroSideElements, CursorGlow } from "./HeroEnhancements";
 
-/* ---------------- NAV ---------------- */
+/* ---------------- Nav Logo (inline SVG, cropped viewBox) ---------------- */
+function NavLogo({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="35 112 224 78"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="ChatOne"
+    >
+      <defs>
+        <linearGradient id="nl_g0" x1="194.275" y1="138.813" x2="253.222" y2="159.012" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0E86FD"/><stop offset="1" stopColor="#8D34FB"/>
+        </linearGradient>
+        <linearGradient id="nl_g1" x1="102.658" y1="176.142" x2="43.6573" y2="132.71" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0C87FD"/><stop offset="1" stopColor="#9132FB"/>
+        </linearGradient>
+      </defs>
+      {/* "Chat" text */}
+      <path d="M112.778 147.332C112.778 145.095 113.283 143.087 114.292 141.31C115.301 139.511 116.672 138.107 118.405 137.098C120.16 136.089 122.102 135.584 124.23 135.584C126.731 135.584 128.914 136.188 130.778 137.394C132.643 138.601 134.003 140.312 134.859 142.528H131.272C130.636 141.146 129.714 140.082 128.508 139.336C127.323 138.59 125.897 138.217 124.23 138.217C122.628 138.217 121.191 138.59 119.919 139.336C118.647 140.082 117.649 141.146 116.925 142.528C116.201 143.888 115.839 145.489 115.839 147.332C115.839 149.153 116.201 150.754 116.925 152.137C117.649 153.497 118.647 154.55 119.919 155.296C121.191 156.042 122.628 156.414 124.23 156.414C125.897 156.414 127.323 156.052 128.508 155.329C129.714 154.583 130.636 153.519 131.272 152.137H134.859C134.003 154.33 132.643 156.031 130.778 157.237C128.914 158.422 126.731 159.014 124.23 159.014C122.102 159.014 120.16 158.52 118.405 157.533C116.672 156.524 115.301 155.131 114.292 153.354C113.283 151.577 112.778 149.57 112.778 147.332ZM147.189 140.455C148.549 140.455 149.777 140.751 150.874 141.343C151.971 141.914 152.827 142.78 153.441 143.943C154.077 145.105 154.395 146.52 154.395 148.188V158.817H151.434V148.616C151.434 146.817 150.984 145.446 150.084 144.502C149.185 143.537 147.956 143.054 146.399 143.054C144.819 143.054 143.558 143.548 142.614 144.535C141.693 145.522 141.232 146.959 141.232 148.846V158.817H138.238V134.466H141.232V143.35C141.825 142.429 142.636 141.716 143.668 141.212C144.721 140.707 145.894 140.455 147.189 140.455ZM157.089 149.734C157.089 147.892 157.462 146.279 158.208 144.897C158.954 143.493 159.974 142.407 161.269 141.639C162.585 140.871 164.044 140.488 165.645 140.488C167.225 140.488 168.596 140.828 169.758 141.508C170.921 142.188 171.788 143.043 172.358 144.074V140.784H175.386V158.817H172.358V155.46C171.766 156.513 170.877 157.391 169.693 158.093C168.53 158.773 167.17 159.113 165.612 159.113C164.011 159.113 162.563 158.718 161.269 157.928C159.974 157.138 158.954 156.031 158.208 154.605C157.462 153.179 157.089 151.555 157.089 149.734ZM172.358 149.767C172.358 148.407 172.084 147.222 171.535 146.213C170.987 145.204 170.241 144.436 169.298 143.91C168.376 143.361 167.356 143.087 166.237 143.087C165.119 143.087 164.099 143.35 163.177 143.877C162.256 144.403 161.521 145.171 160.972 146.18C160.424 147.19 160.15 148.374 160.15 149.734C160.15 151.116 160.424 152.323 160.972 153.354C161.521 154.363 162.256 155.142 163.177 155.691C164.099 156.217 165.119 156.48 166.237 156.48C167.356 156.48 168.376 156.217 169.298 155.691C170.241 155.142 170.987 154.363 171.535 153.354C172.084 152.323 172.358 151.127 172.358 149.767ZM183.02 143.252V153.881C183.02 154.758 183.207 155.383 183.58 155.756C183.953 156.107 184.6 156.283 185.521 156.283H187.726V158.817H185.028C183.36 158.817 182.11 158.433 181.276 157.665C180.442 156.897 180.026 155.636 180.026 153.881V143.252H177.689V140.784H180.026V136.243H183.02V140.784H187.726V143.252H183.02Z" fill="#01013A"/>
+      {/* "One" gradient text */}
+      <path d="M204.611 159.047C202.483 159.047 200.541 158.553 198.786 157.566C197.031 156.557 195.638 155.164 194.607 153.387C193.598 151.588 193.093 149.57 193.093 147.332C193.093 145.095 193.598 143.087 194.607 141.31C195.638 139.511 197.031 138.118 198.786 137.131C200.541 136.122 202.483 135.617 204.611 135.617C206.76 135.617 208.713 136.122 210.468 137.131C212.223 138.118 213.605 139.5 214.614 141.277C215.623 143.054 216.128 145.073 216.128 147.332C216.128 149.592 215.623 151.61 214.614 153.387C213.605 155.164 212.223 156.557 210.468 157.566C208.713 158.553 206.76 159.047 204.611 159.047ZM204.611 156.447C206.212 156.447 207.649 156.074 208.921 155.329C210.216 154.583 211.225 153.519 211.949 152.137C212.695 150.754 213.068 149.153 213.068 147.332C213.068 145.489 212.695 143.888 211.949 142.528C211.225 141.146 210.227 140.082 208.954 139.336C207.682 138.59 206.234 138.217 204.611 138.217C202.987 138.217 201.539 138.59 200.267 139.336C198.994 140.082 197.985 141.146 197.239 142.528C196.515 143.888 196.154 145.489 196.154 147.332C196.154 149.153 196.515 150.754 197.239 152.137C197.985 153.519 198.994 154.583 200.267 155.329C201.561 156.074 203.009 156.447 204.611 156.447ZM227.789 140.455C229.983 140.455 231.76 141.124 233.12 142.462C234.48 143.778 235.16 145.687 235.16 148.188V158.817H232.198V148.616C232.198 146.817 231.749 145.446 230.849 144.502C229.95 143.537 228.721 143.054 227.164 143.054C225.584 143.054 224.323 143.548 223.379 144.535C222.458 145.522 221.997 146.959 221.997 148.846V158.817H219.003V140.784H221.997V143.35C222.59 142.429 223.39 141.716 224.399 141.212C225.43 140.707 226.56 140.455 227.789 140.455ZM255.426 149.109C255.426 149.68 255.393 150.283 255.328 150.919H240.914C241.024 152.696 241.627 154.089 242.724 155.098C243.843 156.085 245.192 156.579 246.772 156.579C248.066 156.579 249.141 156.283 249.997 155.691C250.874 155.076 251.489 154.265 251.84 153.255H255.064C254.582 154.988 253.617 156.403 252.169 157.5C250.721 158.575 248.922 159.113 246.772 159.113C245.061 159.113 243.525 158.729 242.165 157.961C240.827 157.193 239.774 156.107 239.006 154.703C238.238 153.277 237.854 151.632 237.854 149.767C237.854 147.903 238.227 146.268 238.973 144.864C239.719 143.46 240.761 142.385 242.099 141.639C243.459 140.871 245.017 140.488 246.772 140.488C248.483 140.488 249.997 140.861 251.313 141.606C252.629 142.352 253.638 143.383 254.34 144.7C255.064 145.994 255.426 147.464 255.426 149.109ZM252.333 148.484C252.333 147.343 252.081 146.367 251.576 145.555C251.072 144.722 250.381 144.096 249.503 143.68C248.648 143.241 247.693 143.021 246.64 143.021C245.127 143.021 243.832 143.504 242.757 144.469C241.704 145.435 241.101 146.773 240.947 148.484H252.333Z" fill="url(#nl_g0)"/>
+      {/* Icon mark dark */}
+      <path d="M52.7388 179.042L60.3186 183.144C62.3012 184.217 64.6908 184.217 66.6735 183.144L75.744 178.236L84.5266 172.828C86.4462 171.646 87.6409 169.574 87.704 167.319L87.9922 157.003L87.704 146.687C87.6409 144.432 86.4462 142.36 84.5266 141.178L75.744 135.771L66.6735 130.862C64.6908 129.789 62.3012 129.789 60.3186 130.862L51.2479 135.771L42.4656 141.178C40.5457 142.36 39.351 144.432 39.2882 146.687L39 157.003L39.2882 167.319C39.351 169.574 40.5457 171.646 42.4656 172.828L44.6819 174.192L42.8353 180.158C42.6098 180.887 43.2745 181.578 44.0106 181.381L52.7388 179.042Z" fill="#01013A"/>
+      {/* Icon mark gradient */}
+      <path d="M89.6204 120.944L80.0319 115.76C77.524 114.404 74.5011 114.404 71.9929 115.76L60.5187 121.964L49.4088 128.799C46.9804 130.293 45.4691 132.911 45.3893 135.761L45.0248 148.8L45.3893 161.839C45.4691 164.689 46.9804 167.307 49.4088 168.801L60.5187 175.636L71.9929 181.84C74.5011 183.196 77.524 183.196 80.0319 181.84L91.5063 175.636L102.616 168.801C105.045 167.307 106.556 164.689 106.635 161.839L107 148.8L106.635 135.761C106.556 132.911 105.045 130.293 102.616 128.799L99.8123 127.074L102.148 119.534C102.434 118.613 101.593 117.739 100.662 117.988L89.6204 120.944Z" fill="url(#nl_g1)"/>
+      {/* Bubble face */}
+      <path d="M56.4964 135.049C60.89 130.275 66.0841 130.76 72.1167 131.324C73.1948 131.425 74.2997 131.528 75.4316 131.604C76.4602 131.535 77.4994 131.443 78.5403 131.352C85.0507 130.777 91.6284 130.197 96.0934 135.049C99.1423 138.656 98.8384 145.46 98.5092 152.832L98.5001 153.037C98.3136 158.258 94.4552 161.596 89.439 162.709C85.0876 163.55 80.6771 163.509 76.296 163.38C71.9131 163.509 67.5026 163.55 63.1512 162.709C62.9536 162.665 62.756 162.617 62.5602 162.565C61.1824 165.948 63.2289 170.497 63.3086 170.674L63.3101 170.677C49.0533 163.066 53.4731 138.632 56.4964 135.049Z" fill="white"/>
+      <path d="M78.8099 143.224C78.8099 140.687 80.8663 138.631 83.4029 138.631H83.705C86.2417 138.631 88.2981 140.687 88.2981 143.224V146.915C88.2981 149.452 86.2417 151.508 83.705 151.508H83.4029C80.8663 151.508 78.8099 149.452 78.8099 146.915V143.224Z" fill="#01013A"/>
+      <path d="M62.8828 143.224C62.8828 140.687 64.9392 138.631 67.4758 138.631H67.778C70.3146 138.631 72.371 140.687 72.371 143.224V146.915C72.371 149.452 70.3146 151.508 67.7779 151.508H67.4758C64.9392 151.508 62.8828 149.452 62.8828 146.915V143.224Z" fill="#01013A"/>
+      <path d="M83.2148 141.342C83.2148 140.032 84.2768 138.97 85.5868 138.97C86.8969 138.97 87.9589 140.032 87.9589 141.342C87.9589 142.652 86.8969 143.714 85.5868 143.714C84.2768 143.714 83.2148 142.652 83.2148 141.342Z" fill="white"/>
+      <path d="M67.2891 141.342C67.2891 140.032 68.3511 138.97 69.6611 138.97C70.9711 138.97 72.0331 140.032 72.0331 141.342C72.0331 142.652 70.9711 143.714 69.6611 143.714C68.3511 143.714 67.2891 142.652 67.2891 141.342Z" fill="white"/>
+    </svg>
+  );
+}
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -34,7 +69,8 @@ export function Nav() {
       >
         <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3.5">
           <a href="#" className="flex items-center gap-2">
-            <img src={logoSvg} alt="ChatOne" className="h-8 w-auto" />
+            {/* Inline SVG with tight viewBox cropped to actual content bounds */}
+            <img src={logoSvg} alt="ChatOne" className="w-auto" style={{ height: 32, transform: "scale(4.3)", transformOrigin: "left center", imageRendering: "auto", overflow: "visible" }} />
           </a>
           <div className="hidden md:flex items-center gap-1">
             {links.map((l) => (
@@ -101,31 +137,48 @@ export function Hero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const yBlob = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const mouseX = useMotionValue(0.5); const mouseY = useMotionValue(0.5);
+
+  // Normalised mouse position [0..1] over the whole section
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
   const spotX = useSpring(mouseX, { stiffness: 60, damping: 20 });
   const spotY = useSpring(mouseY, { stiffness: 60, damping: 20 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    mouseX.set((e.clientX - r.left) / r.width);
+    mouseY.set((e.clientY - r.top) / r.height);
+  };
 
   return (
     <section
       ref={ref}
-      onMouseMove={(e) => {
-        const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        mouseX.set((e.clientX - r.left) / r.width);
-        mouseY.set((e.clientY - r.top) / r.height);
-      }}
+      onMouseMove={handleMouseMove}
       className="relative overflow-hidden pt-20 pb-32 mesh-bg"
     >
+      {/* ── Background layer ─────────────────────────────────────── */}
       {/* Animated blobs */}
       <motion.div style={{ y: yBlob }} className="pointer-events-none absolute inset-0">
         <div className="absolute -top-24 -left-24 w-[520px] h-[520px] rounded-full bg-[#6C4BFF]/20 blur-[120px] animate-blob" />
         <div className="absolute top-40 -right-32 w-[560px] h-[560px] rounded-full bg-[#3B82F6]/25 blur-[130px] animate-blob" style={{ animationDelay: "-6s" }} />
         <div className="absolute bottom-0 left-1/3 w-[420px] h-[420px] rounded-full bg-indigo-200/60 blur-[120px] animate-blob" style={{ animationDelay: "-12s" }} />
+        {/* Extra ambient orbs in the side columns */}
+        <motion.div
+          animate={{ x: [0, 20, 0], y: [0, -15, 0] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/4 -left-16 w-[280px] h-[280px] rounded-full bg-[#6C4BFF]/10 blur-[90px]"
+        />
+        <motion.div
+          animate={{ x: [0, -18, 0], y: [0, 12, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: -5 }}
+          className="absolute top-1/3 -right-16 w-[260px] h-[260px] rounded-full bg-[#3B82F6]/12 blur-[90px]"
+        />
       </motion.div>
 
-      {/* Grid */}
+      {/* Grid background */}
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-70" />
 
-      {/* Spotlight */}
+      {/* Cursor-following spotlight */}
       <motion.div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -137,56 +190,102 @@ export function Hero() {
         }}
       />
 
-      <motion.div style={{ opacity }} className="relative max-w-7xl mx-auto px-6 pt-14 pb-8 text-center">
-        <motion.div initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-          <span className="eyebrow">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />
-            No-code · Free to start
-          </span>
-        </motion.div>
+      {/* Enhanced cursor glow (from HeroEnhancements) */}
+      <CursorGlow mouseX={mouseX} mouseY={mouseY} />
 
-        <h1 className="font-display mt-6 text-[clamp(2.5rem,7vw,5.75rem)] leading-[0.98] tracking-tight text-brand-ink max-w-5xl mx-auto">
-          <StaggerText text="The AI chatbot for websites" />
-          <br />
-          <span className="text-gradient-brand italic">that speaks for your brand</span>
-        </h1>
+      {/* ── Three-column layout: [left side] [center] [right side] ── */}
+      <div className="relative max-w-[1600px] mx-auto flex items-start min-h-[580px] md:min-h-[640px]">
 
-        <motion.p
-          initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.7 }}
-          className="mt-7 max-w-2xl mx-auto text-lg text-foreground/60"
+        {/* Left side panel — interactive floating elements */}
+        <div
+          className="hidden md:block relative shrink-0 pointer-events-none"
+          style={{ width: "clamp(180px, 18vw, 300px)", minHeight: "560px" }}
+          aria-hidden="true"
         >
-          ChatOne learns from your own content and answers every visitor question instantly, around the clock.
-          Upload documents, connect cloud storage, deploy in minutes.
-        </motion.p>
+          <HeroSideElements side="left" mouseX={mouseX} mouseY={mouseY} />
+        </div>
 
+        {/* Center: main hero content */}
         <motion.div
-          initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.75, duration: 0.7 }}
-          className="mt-9 flex flex-wrap items-center justify-center gap-3"
+          style={{ opacity }}
+          className="flex-1 min-w-0 px-4 md:px-6 pt-14 pb-8 text-center"
         >
-          <MagneticButton icon={ArrowRight}>Get started free</MagneticButton>
-          <MagneticButton variant="ghost" icon={ArrowRight}>See a live demo</MagneticButton>
+          <motion.div
+            initial={{ y: 12, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="eyebrow">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />
+              No-code · Free to start
+            </span>
+          </motion.div>
+
+          <h1 className="font-display mt-6 text-[clamp(2.2rem,6vw,5.75rem)] leading-[0.98] tracking-tight text-brand-ink max-w-5xl mx-auto">
+            <StaggerText text="The AI chatbot for websites" />
+            <br />
+            <motion.span
+              className="text-gradient-brand italic"
+              initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
+              animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
+              transition={{ delay: 0.55, duration: 0.9, ease: [0.2, 0.7, 0.2, 1] }}
+            >
+              that speaks for your brand
+            </motion.span>
+          </h1>
+
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.7 }}
+            className="mt-7 max-w-2xl mx-auto text-lg text-foreground/60"
+          >
+            ChatOne learns from your own content and answers every visitor question instantly, around the clock.
+            Upload documents, connect cloud storage, deploy in minutes.
+          </motion.p>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.75, duration: 0.7 }}
+            className="mt-9 flex flex-wrap items-center justify-center gap-3"
+          >
+            <MagneticButton icon={ArrowRight}>Get started free</MagneticButton>
+            <MagneticButton variant="ghost" icon={ArrowRight}>See a live demo</MagneticButton>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.1, duration: 0.9 }}
+            className="mt-8 flex items-center justify-center gap-3 text-sm text-foreground/60"
+          >
+            <div className="flex -space-x-2">
+              {["J", "M", "A", "R", "+"].map((c, i) => (
+                <span
+                  key={i}
+                  className="w-7 h-7 rounded-full border-2 border-white text-[11px] font-semibold text-white flex items-center justify-center bg-brand-gradient"
+                  style={{ backgroundPosition: `${i * 30}% 0` }}
+                >
+                  {c}
+                </span>
+              ))}
+            </div>
+            Loved by <strong className="text-foreground">2,000+ teams</strong> across 50+ countries
+          </motion.div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ delay: 1.1, duration: 0.9 }}
-          className="mt-8 flex items-center justify-center gap-3 text-sm text-foreground/60"
+        {/* Right side panel — interactive floating elements */}
+        <div
+          className="hidden md:block relative shrink-0 pointer-events-none"
+          style={{ width: "clamp(180px, 18vw, 300px)", minHeight: "560px" }}
+          aria-hidden="true"
         >
-          <div className="flex -space-x-2">
-            {["J", "M", "A", "R", "+"].map((c, i) => (
-              <span key={i}
-                className="w-7 h-7 rounded-full border-2 border-white text-[11px] font-semibold text-white flex items-center justify-center bg-brand-gradient"
-                style={{ backgroundPosition: `${i * 30}% 0` }}
-              >{c}</span>
-            ))}
-          </div>
-          Loved by <strong className="text-foreground">2,000+ teams</strong> across 50+ countries
-        </motion.div>
-      </motion.div>
+          <HeroSideElements side="right" mouseX={mouseX} mouseY={mouseY} />
+        </div>
+      </div>
 
-      {/* Hero mockup */}
+      {/* ── Hero mockup ── */}
       <ChatMockup />
     </section>
   );
@@ -423,83 +522,397 @@ function TiltCard({ children, className = "", intensity = 8 }: { children: React
   );
 }
 
+/* ─── WhyChatOne — AI Pipeline Visualization ─── */
+
+/** Animated SVG "brain" connecting sources to answers */
+function AIPipelineSVG() {
+  return (
+    <svg
+      viewBox="0 0 320 480"
+      className="w-full h-full"
+      fill="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#6C4BFF" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.8" />
+        </linearGradient>
+        <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#C4B0FF" />
+          <stop offset="50%" stopColor="#6C4BFF" />
+          <stop offset="100%" stopColor="#3B82F6" />
+        </radialGradient>
+        <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#6C4BFF" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+        </radialGradient>
+        <filter id="softGlow">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="innerGlow">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        {/* Path IDs for particle travel */}
+        <path id="p1" d="M 30 100 C 100 100, 160 200, 160 240" />
+        <path id="p2" d="M 30 200 C 90 200, 150 220, 160 240" />
+        <path id="p3" d="M 30 300 C 100 300, 155 260, 160 240" />
+        <path id="p4" d="M 30 380 C 110 360, 155 280, 160 240" />
+        <path id="q1" d="M 160 240 C 170 240, 230 140, 290 130" />
+        <path id="q2" d="M 160 240 C 175 240, 235 210, 290 210" />
+        <path id="q3" d="M 160 240 C 178 240, 238 290, 290 300" />
+        <path id="q4" d="M 160 240 C 172 240, 232 360, 290 370" />
+      </defs>
+
+      {/* ── Left input spokes ── */}
+      {[
+        { id: "p1", d: "M 30 100 C 100 100, 160 200, 160 240" },
+        { id: "p2", d: "M 30 200 C 90 200, 150 220, 160 240" },
+        { id: "p3", d: "M 30 300 C 100 300, 155 260, 160 240" },
+        { id: "p4", d: "M 30 380 C 110 360, 155 280, 160 240" },
+      ].map(({ id, d }, i) => (
+        <g key={id}>
+          <motion.path
+            d={d}
+            stroke="url(#flowGrad)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 0.55 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 + i * 0.15, duration: 1.2, ease: "easeOut" }}
+          />
+          {/* Traveling particle */}
+          <motion.circle
+            r="3"
+            fill="white"
+            filter="url(#softGlow)"
+            style={{ offsetPath: `path("${d}")` } as React.CSSProperties}
+            animate={{ offsetDistance: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              delay: 1.2 + i * 0.5,
+              repeatDelay: 1.5,
+              ease: "easeInOut",
+            }}
+          />
+        </g>
+      ))}
+
+      {/* ── Right output spokes ── */}
+      {[
+        { id: "q1", d: "M 160 240 C 170 240, 230 140, 290 130" },
+        { id: "q2", d: "M 160 240 C 175 240, 235 210, 290 210" },
+        { id: "q3", d: "M 160 240 C 178 240, 238 290, 290 300" },
+        { id: "q4", d: "M 160 240 C 172 240, 232 360, 290 370" },
+      ].map(({ id, d }, i) => (
+        <g key={id}>
+          <motion.path
+            d={d}
+            stroke="url(#flowGrad)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 0.55 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 + i * 0.15, duration: 1.1, ease: "easeOut" }}
+          />
+          <motion.circle
+            r="3"
+            fill="#3B82F6"
+            filter="url(#softGlow)"
+            style={{ offsetPath: `path("${d}")` } as React.CSSProperties}
+            animate={{ offsetDistance: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
+            transition={{
+              duration: 1.8,
+              repeat: Infinity,
+              delay: 1.8 + i * 0.45,
+              repeatDelay: 1.8,
+              ease: "easeInOut",
+            }}
+          />
+        </g>
+      ))}
+
+      {/* ── Central AI core ── */}
+      {/* Outer glow halo */}
+      <motion.circle
+        cx="160" cy="240" r="52"
+        fill="url(#glowGrad)"
+        animate={{ r: [52, 62, 52], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      {/* Mid ring */}
+      <motion.circle
+        cx="160" cy="240" r="38"
+        fill="none"
+        stroke="rgba(108,75,255,0.35)"
+        strokeWidth="1"
+        animate={{ r: [38, 44, 38] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      {/* Core */}
+      <circle cx="160" cy="240" r="28" fill="url(#coreGrad)" filter="url(#innerGlow)" />
+      {/* Orbit ring 1 */}
+      <motion.g
+        style={{ transformOrigin: "160px 240px" }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+      >
+        <circle cx="160" cy="240" r="36" fill="none" stroke="rgba(108,75,255,0.3)" strokeWidth="1" strokeDasharray="4 8" />
+        <circle cx="196" cy="240" r="3.5" fill="#6C4BFF" filter="url(#softGlow)" />
+      </motion.g>
+      {/* Orbit ring 2 — opposite */}
+      <motion.g
+        style={{ transformOrigin: "160px 240px" }}
+        animate={{ rotate: -360 }}
+        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+      >
+        <circle cx="160" cy="240" r="44" fill="none" stroke="rgba(59,130,246,0.2)" strokeWidth="1" strokeDasharray="3 10" />
+        <circle cx="160" cy="196" r="2.5" fill="#3B82F6" filter="url(#softGlow)" />
+      </motion.g>
+
+      {/* ── Center label ── */}
+      <text x="160" y="236" textAnchor="middle" fill="white" fontSize="10" fontWeight="700" letterSpacing="0.5">ChatOne</text>
+      <text x="160" y="250" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="8">AI Engine</text>
+
+      {/* ── Left node dots ── */}
+      {[100, 200, 300, 380].map((y, i) => (
+        <motion.circle
+          key={i} cx="30" cy={y} r="5"
+          fill="url(#coreGrad)"
+          filter="url(#softGlow)"
+          initial={{ scale: 0, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 + i * 0.12, type: "spring", stiffness: 200, damping: 14 }}
+        />
+      ))}
+
+      {/* ── Right node dots ── */}
+      {[130, 210, 300, 370].map((y, i) => (
+        <motion.circle
+          key={i} cx="290" cy={y} r="5"
+          fill="#3B82F6"
+          filter="url(#softGlow)"
+          initial={{ scale: 0, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.55 + i * 0.12, type: "spring", stiffness: 200, damping: 14 }}
+        />
+      ))}
+    </svg>
+  );
+}
+
 /* ---------------- Why ChatOne ---------------- */
 export function WhyChatOne() {
-  const bullets = [
-    { icon: BookOpen, t: "Train on your content", d: "PDFs, DOCX, websites — all in one workspace." },
-    { icon: Cloud, t: "Sync from the cloud", d: "Google Drive & OneDrive stay in perfect sync." },
-    { icon: Code2, t: "Deploy in minutes", d: "One line of code on any website, any stack." },
-    { icon: Palette, t: "Match your brand", d: "Colors, logo, tone — fully yours." },
+  const features = [
+    { icon: BookOpen, title: "Train on your content", desc: "PDFs, DOCX, websites — indexed in minutes." },
+    { icon: Cloud,    title: "Cloud sync",             desc: "Google Drive & OneDrive stay in perfect sync." },
+    { icon: Code2,    title: "One-line deploy",         desc: "Any website, any stack. Paste and go." },
+    { icon: Palette,  title: "Your brand, not a bubble",desc: "Colors, logo, tone — fully customizable." },
   ];
+
   return (
-    <section id="why-chatone" className="relative py-28 md:py-36 px-6 overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-60" />
-      <div className="relative max-w-7xl mx-auto">
-        <div className="text-center">
-          <SectionHeading
-            center
-            eyebrow="Why ChatOne"
-            title="One platform."
-            highlight="Every answer."
-            desc="Turn every document you already have into a 24/7 AI assistant that answers instantly, on brand, in plain language."
-          />
-        </div>
+    <section id="why-chatone" className="relative py-24 md:py-32 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 mesh-bg opacity-50" />
+      <div className="pointer-events-none absolute inset-0 grid-bg opacity-35" />
+      <motion.div animate={{ x:[0,40,0],y:[0,-30,0] }} transition={{ duration:20,repeat:Infinity,ease:"easeInOut" }}
+        className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-[#6C4BFF]/10 blur-[130px]" />
+      <motion.div animate={{ x:[0,-35,0],y:[0,25,0] }} transition={{ duration:24,repeat:Infinity,ease:"easeInOut",delay:-8 }}
+        className="pointer-events-none absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#3B82F6]/10 blur-[130px]" />
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(180px,auto)] items-stretch">
-          <Reveal className="md:col-span-1 lg:col-span-6">
-            <TiltCard className="rounded-3xl p-8 md:p-10 min-h-[260px] h-full bg-white border border-black/[0.06] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_60px_-30px_rgba(108,75,255,0.25)] overflow-hidden relative group">
-              <div className="pointer-events-none absolute -top-20 -right-20 w-72 h-72 rounded-full bg-[#6C4BFF]/15 blur-3xl group-hover:scale-125 transition-transform duration-700" />
-              <div className="relative">
-                <div className="eyebrow"><TrendingUp className="w-3.5 h-3.5" /> Support impact</div>
-                <div className="font-display mt-6 text-7xl md:text-8xl text-gradient-brand leading-none">
-                  <Counter to={60} suffix="%" />
+      <div className="relative max-w-7xl mx-auto px-6">
+        <Reveal>
+          <div className="text-center max-w-2xl mx-auto">
+            <span className="eyebrow"><span className="w-1.5 h-1.5 rounded-full bg-[#6C4BFF]" />Why ChatOne</span>
+            <h2 className="font-display mt-5 text-4xl md:text-5xl lg:text-[3.5rem] leading-[1.05] tracking-tight text-brand-ink">
+              One platform. <span className="text-gradient-brand italic">Every answer.</span>
+            </h2>
+            <p className="mt-4 text-lg text-foreground/60">Your content flows in. Instant, accurate answers flow out.</p>
+          </div>
+        </Reveal>
+
+        {/* 3-column pipeline */}
+        <div className="mt-14 grid grid-cols-1 lg:grid-cols-[1fr_280px_1fr] gap-6 items-stretch">
+
+          {/* LEFT — Knowledge sources feed */}
+          <Reveal delay={0.05}>
+            <div className="flex flex-col gap-4 h-full">
+              <div className="flex-1 rounded-3xl bg-white border border-black/[0.06] shadow-[0_10px_40px_-20px_rgba(108,75,255,0.15)] p-6 overflow-hidden">
+                {/* Header row */}
+                <div className="flex items-center gap-2.5 mb-5">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
+                    <BookOpen className="w-4 h-4 text-[#6C4BFF]" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-brand-ink">Knowledge sources</div>
+                    <div className="text-xs text-foreground/50">Ingesting your content…</div>
+                  </div>
+                  <span className="ml-auto flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />Live
+                  </span>
                 </div>
-                <p className="mt-4 text-lg text-brand-ink font-medium">Support tickets resolved</p>
-                <p className="mt-1 text-sm text-foreground/55">Average reduction in the first month.</p>
+                <div className="space-y-3">
+                  {[
+                    { name: "product-guide.pdf", size: "2.4 MB", tag: "PDF", pct: 100, color: "#6C4BFF" },
+                    { name: "help-center.com",   size: "312 pages", tag: "URL", pct: 84,  color: "#3B82F6" },
+                    { name: "policies.docx",     size: "180 KB",  tag: "DOC", pct: 60,  color: "#6C4BFF" },
+                    { name: "faq-database.txt",  size: "44 KB",   tag: "TXT", pct: 35,  color: "#3B82F6" },
+                  ].map((f, i) => (
+                    <motion.div key={f.name}
+                      initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                      transition={{ delay: 0.2 + i * 0.12, duration: 0.5 }}
+                      className="rounded-2xl bg-indigo-50/50 border border-indigo-100/60 px-3.5 py-3"
+                    >
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold" style={{ background: `linear-gradient(135deg, ${f.color}, #3B82F6)` }}>{f.tag}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-semibold text-brand-ink truncate">{f.name}</div>
+                          <div className="text-[10px] text-foreground/50">{f.size}</div>
+                        </div>
+                        <span className="text-[10px] font-mono text-[#6C4BFF]">{f.pct}%</span>
+                      </div>
+                      <div className="h-1 rounded-full bg-indigo-100 overflow-hidden">
+                        <motion.div className="h-full rounded-full"
+                          style={{ background: `linear-gradient(90deg, ${f.color}, #3B82F6)` }}
+                          initial={{ width: 0 }} whileInView={{ width: `${f.pct}%` }} viewport={{ once: true }}
+                          transition={{ delay: 0.5 + i * 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+                <motion.div initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  transition={{ delay: 0.85, duration: 0.5 }}
+                  className="mt-4 rounded-2xl border border-dashed border-[#6C4BFF]/25 bg-indigo-50/30 px-4 py-3 text-center">
+                  <Upload className="w-4 h-4 text-[#6C4BFF]/50 mx-auto" />
+                  <div className="text-xs text-foreground/40 mt-1">Drop files or paste a URL</div>
+                </motion.div>
               </div>
-            </TiltCard>
-          </Reveal>
-
-          <Reveal delay={0.1} className="md:col-span-1 lg:col-span-6">
-            <div className="grid grid-cols-2 gap-4 md:gap-5 min-h-[260px] h-full">
-              <TiltCard className="rounded-3xl p-6 h-full bg-gradient-to-br from-[#6C4BFF] to-[#3B82F6] text-white shadow-[0_20px_60px_-25px_rgba(108,75,255,0.6)] overflow-hidden relative flex flex-col justify-between">
-                <Rocket className="w-6 h-6 opacity-80" />
-                <div>
-                  <div className="font-display text-4xl md:text-5xl leading-none">&lt; 5<span className="text-2xl md:text-3xl"> min</span></div>
-                  <p className="mt-2 text-sm text-white/85">From signup to a live, trained chatbot.</p>
+              <Reveal delay={0.2}>
+                <div className="rounded-2xl bg-white border border-black/[0.06] shadow-sm px-5 py-4 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-gradient flex items-center justify-center shrink-0">
+                    <Cloud className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-brand-ink">Auto-sync enabled</div>
+                    <div className="text-xs text-foreground/50">Google Drive · OneDrive · Notion</div>
+                  </div>
+                  <span className="ml-auto text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />Live
+                  </span>
                 </div>
-              </TiltCard>
-              <TiltCard className="rounded-3xl p-6 h-full bg-white border border-black/[0.06] shadow-[0_20px_60px_-30px_rgba(15,23,42,0.1)] flex flex-col justify-between">
-                <ShieldCheck className="w-6 h-6 text-[#6C4BFF]" />
-                <div>
-                  <div className="font-display text-4xl md:text-5xl text-brand-ink leading-none">24/7</div>
-                  <p className="mt-2 text-sm text-foreground/60">Always on — weekends, holidays, off-hours.</p>
-                </div>
-              </TiltCard>
+              </Reveal>
             </div>
           </Reveal>
 
-          {bullets.map((b, i) => (
-            <Reveal key={b.t} delay={0.15 + i * 0.05} className="md:col-span-1 lg:col-span-3">
-              <motion.div
-                whileHover={{ y: -4 }}
-                transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className="rounded-2xl p-6 min-h-[180px] h-full bg-white/70 backdrop-blur-xl border border-black/[0.06] hover:border-[#6C4BFF]/25 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_15px_40px_-20px_rgba(108,75,255,0.25)] transition-all flex items-start gap-4"
-              >
-                <div className="w-11 h-11 shrink-0 rounded-xl bg-indigo-50 border border-indigo-100 text-[#6C4BFF] flex items-center justify-center">
-                  <b.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold text-brand-ink">{b.t}</h3>
-                  <p className="mt-1 text-sm text-foreground/60 leading-relaxed">{b.d}</p>
+          {/* CENTER — AI Pipeline SVG */}
+          <Reveal delay={0.1}>
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="relative w-full" style={{ height: 400 }}>
+                <AIPipelineSVG />
+              </div>
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }} transition={{ delay: 1, duration: 0.5, type: "spring" }}
+                className="text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/[0.06] shadow-sm text-sm">
+                  <Zap className="w-3.5 h-3.5 text-[#6C4BFF]" />
+                  <span className="text-brand-ink font-semibold">0.4s</span>
+                  <span className="text-foreground/50">avg response</span>
                 </div>
               </motion.div>
-            </Reveal>
-          ))}
+            </div>
+          </Reveal>
+
+          {/* RIGHT — Live answers + outcomes */}
+          <Reveal delay={0.08}>
+            <div className="flex flex-col gap-4 h-full">
+              {/* Live chat panel */}
+              <div className="flex-1 rounded-3xl bg-white border border-black/[0.06] shadow-[0_10px_40px_-20px_rgba(59,130,246,0.15)] overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-[#6C4BFF] to-[#3B82F6]">
+                  <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
+                    <Bot className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <span className="text-xs font-semibold text-white">Aria · Support Bot</span>
+                  <span className="ml-auto flex items-center gap-1 text-[10px] text-white/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />Online
+                  </span>
+                </div>
+                <div className="p-4 space-y-2.5 bg-gradient-to-b from-white to-indigo-50/20">
+                  {[
+                    { side: "user", text: "Do you ship internationally?" },
+                    { side: "bot",  text: "Yes — 50+ countries, tracked delivery. Want a quote?" },
+                    { side: "user", text: "What's your return policy?" },
+                    { side: "bot",  text: "Free returns within 30 days, no questions asked." },
+                  ].map((m, i) => (
+                    <motion.div key={i}
+                      initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }} transition={{ delay: 0.3 + i * 0.18, duration: 0.4 }}
+                      className={`flex ${m.side === "user" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div className={`max-w-[85%] text-[12.5px] leading-snug rounded-2xl px-3 py-2 ${
+                        m.side === "user"
+                          ? "bg-brand-gradient text-white rounded-tr-sm shadow-md"
+                          : "bg-white border border-black/5 text-brand-ink rounded-tl-sm shadow-sm"
+                      }`}>{m.text}</div>
+                    </motion.div>
+                  ))}
+                  <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+                    transition={{ delay: 1.1 }}
+                    className="flex gap-1 px-3 py-2 w-fit rounded-2xl bg-white border border-black/5 shadow-sm">
+                    {[0,1,2].map(i => (
+                      <motion.span key={i} className="w-1.5 h-1.5 rounded-full bg-foreground/30"
+                        animate={{ y:[0,-3,0], opacity:[0.4,1,0.4] }}
+                        transition={{ duration:0.9, repeat:Infinity, delay:i*0.15 }} />
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+              {/* Stat pills */}
+              <div className="grid grid-cols-2 gap-3">
+                <Reveal delay={0.25}>
+                  <div className="rounded-2xl bg-white border border-black/[0.06] shadow-sm p-4 text-center overflow-hidden relative">
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#6C4BFF]/5 to-transparent" />
+                    <div className="font-display text-3xl text-gradient-brand leading-none relative z-10"><Counter to={60} suffix="%" /></div>
+                    <div className="text-[11px] text-foreground/55 mt-1 relative z-10">fewer tickets</div>
+                    <div className="mt-2 h-1 rounded-full bg-indigo-50 overflow-hidden relative z-10">
+                      <motion.div className="h-full rounded-full bg-brand-gradient" initial={{ width:0 }}
+                        whileInView={{ width:"60%" }} viewport={{ once:true }} transition={{ delay:0.4,duration:0.8,ease:[0.22,1,0.36,1] }} />
+                    </div>
+                  </div>
+                </Reveal>
+                <Reveal delay={0.28}>
+                  <div className="rounded-2xl bg-gradient-to-br from-[#6C4BFF] to-[#3B82F6] p-4 text-center overflow-hidden relative shadow-[0_8px_24px_-8px_rgba(108,75,255,0.5)]">
+                    <motion.div animate={{ rotate:360 }} transition={{ duration:18,repeat:Infinity,ease:"linear" }}
+                      className="absolute -top-4 -right-4 w-14 h-14 rounded-full border-8 border-white/10" />
+                    <div className="font-display text-3xl text-white leading-none relative z-10">&lt;5<span className="text-lg">m</span></div>
+                    <div className="text-[11px] text-white/70 mt-1 relative z-10">to go live</div>
+                  </div>
+                </Reveal>
+              </div>
+              <Reveal delay={0.3}>
+                <div className="rounded-2xl bg-white border border-black/[0.06] shadow-sm px-5 py-4 flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 text-[#6C4BFF] shrink-0" />
+                  <div>
+                    <div className="text-sm font-semibold text-brand-ink">Always online · 24/7</div>
+                    <div className="text-xs text-foreground/50">Weekends, holidays, off-hours</div>
+                  </div>
+                  <div className="ml-auto font-display text-xl text-gradient-brand">24/7</div>
+                </div>
+              </Reveal>
+            </div>
+          </Reveal>
         </div>
 
-        <Reveal delay={0.35}>
-          <div className="mt-12 flex justify-center"><MagneticButton icon={ArrowRight}>Try ChatOne free</MagneticButton></div>
+        <Reveal delay={0.3}>
+          <div className="mt-12 flex justify-center">
+            <MagneticButton icon={ArrowRight}>Try ChatOne free</MagneticButton>
+          </div>
         </Reveal>
       </div>
     </section>
@@ -600,7 +1013,7 @@ export function Features() {
         </div>
 
         {/* Horizontal track */}
-        <div ref={viewportRef} className="relative z-10 flex-1 min-h-0 flex items-start mt-8 md:mt-10 overflow-visible">
+        <div ref={viewportRef} className="relative z-10 flex-1 min-h-0 flex items-center mt-8 md:mt-10 pb-8 md:pb-10 overflow-visible">
           <motion.div
             ref={trackRef}
             style={{ x: xSpring }}
@@ -674,7 +1087,7 @@ function FeatureCard({
         // Pull each card (except last) hard left so they stack at center
         marginRight: isLast ? 0 : negativeMargin,
       }}
-      className={`relative shrink-0 w-[min(82vw,420px)] sm:w-[min(62vw,460px)] md:w-[min(44vw,520px)] lg:w-[min(33vw,560px)] xl:w-[min(30vw,580px)] h-[clamp(420px,50vh,560px)] md:h-[clamp(440px,52vh,580px)] rounded-[28px] md:rounded-[32px] overflow-hidden ${s.bg} ${s.text} shadow-[0_30px_80px_-40px_rgba(15,10,60,0.35)] ring-1 ${s.ring}`}
+      className={`relative shrink-0 w-[min(82vw,420px)] sm:w-[min(62vw,460px)] md:w-[min(44vw,520px)] lg:w-[min(33vw,560px)] xl:w-[min(30vw,580px)] h-[clamp(380px,46vh,520px)] md:h-[clamp(400px,48vh,540px)] rounded-[28px] md:rounded-[32px] overflow-hidden ${s.bg} ${s.text} shadow-[0_30px_80px_-40px_rgba(15,10,60,0.35)] ring-1 ${s.ring}`}
     >
       {/* Top: text */}
       <div className="relative p-6 md:p-8">
