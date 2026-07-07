@@ -579,7 +579,7 @@ export function Features() {
         </div>
 
         {/* Header row */}
-        <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-24 md:pt-28">
+        <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-[4.5rem] md:pt-20 lg:pt-[5.5rem]">
           <div className="flex items-end justify-between gap-6">
             <div className="flex items-center gap-3">
               <span className="eyebrow">
@@ -593,18 +593,18 @@ export function Features() {
               </div>
             </div>
           </div>
-          <h2 className="mt-6 max-w-4xl font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-brand-ink">
+          <h2 className="mt-5 max-w-4xl font-display text-4xl md:text-5xl lg:text-[56px] leading-[1.02] tracking-tight text-brand-ink">
             Everything you need to ship a{" "}
             <span className="text-gradient-brand italic">smart AI assistant</span>.
           </h2>
         </div>
 
         {/* Horizontal track */}
-        <div ref={viewportRef} className="relative z-10 flex-1 flex items-center mt-8 md:mt-12 overflow-visible">
+        <div ref={viewportRef} className="relative z-10 flex-1 min-h-0 flex items-start mt-8 md:mt-10 overflow-visible">
           <motion.div
             ref={trackRef}
             style={{ x: xSpring }}
-            className="flex gap-6 md:gap-8 pl-6 md:pl-10 pr-[20vw] will-change-transform"
+            className="flex items-center gap-5 md:gap-6 lg:gap-7 pl-6 md:pl-10 pr-[20vw] will-change-transform"
           >
             {FEATURE_ITEMS.map((f, i) => (
               <FeatureCard key={f.title} item={f} index={i} />
@@ -633,21 +633,21 @@ function FeatureCard({ item, index }: { item: FeatureItem; index: number }) {
       viewport={{ once: true, margin: "-20%" }}
       transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -6 }}
-      className={`relative shrink-0 w-[82vw] sm:w-[62vw] md:w-[46vw] lg:w-[36vw] xl:w-[32vw] h-[62vh] md:h-[68vh] rounded-[32px] overflow-hidden ${s.bg} ${s.text} shadow-[0_30px_80px_-40px_rgba(15,10,60,0.35)] ring-1 ${s.ring}`}
+      className={`relative shrink-0 w-[min(82vw,420px)] sm:w-[min(62vw,460px)] md:w-[min(44vw,520px)] lg:w-[min(33vw,560px)] xl:w-[min(30vw,580px)] h-[clamp(420px,50vh,560px)] md:h-[clamp(440px,52vh,580px)] rounded-[28px] md:rounded-[32px] overflow-hidden ${s.bg} ${s.text} shadow-[0_30px_80px_-40px_rgba(15,10,60,0.35)] ring-1 ${s.ring}`}
     >
       {/* Top: text */}
-      <div className="relative p-8 md:p-10">
+      <div className="relative p-6 md:p-8">
         <div className={`inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 rounded-full border ${s.chip}`}>
           <Icn className="w-3.5 h-3.5" /> {item.eyebrow}
         </div>
-        <h3 className="mt-6 font-display text-3xl md:text-[40px] leading-[1.05] tracking-tight whitespace-pre-line">
+        <h3 className="mt-5 font-display text-[30px] md:text-[34px] lg:text-[36px] leading-[1.06] tracking-tight whitespace-pre-line">
           {item.title}
         </h3>
-        <p className={`mt-4 max-w-md text-[15px] md:text-base leading-relaxed ${s.sub}`}>{item.desc}</p>
+        <p className={`mt-3 max-w-md text-sm md:text-[15px] leading-relaxed ${s.sub}`}>{item.desc}</p>
       </div>
 
       {/* Bottom: visual */}
-      <div className="absolute inset-x-0 bottom-0 h-[46%] md:h-[48%] px-6 md:px-8 pb-6 md:pb-8">
+      <div className="absolute inset-x-0 bottom-0 h-[42%] md:h-[44%] px-5 md:px-7 pb-5 md:pb-7">
         <FeatureVisual kind={item.visual} variant={item.variant} />
       </div>
     </motion.article>
